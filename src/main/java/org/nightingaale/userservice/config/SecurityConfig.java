@@ -17,7 +17,7 @@ public class SecurityConfig {
 
     @Bean
     public JwtDecoder jwtDecoder() {
-        return NimbusJwtDecoder.withJwkSetUri("")
+        return NimbusJwtDecoder.withJwkSetUri("http://auth-service:8090/realms/auth-service/protocol/openid-connect/certs")
                 .jwsAlgorithm(SignatureAlgorithm.ES256)
                 .build();
     }
@@ -27,7 +27,7 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests
-                                .requestMatchers("api/v1/openapi-docs/**").permitAll()
+                                .requestMatchers("api/v1/openapi-docs/**", "/actuator/**").permitAll()
                 .anyRequest().authenticated()
                 )
 
