@@ -18,7 +18,7 @@ public class SecurityConfig {
 
     @Value("{keycloak.jwk-certs}")
 
-    String keycloakJwkCert;
+    private String keycloakJwkCert;
 
     @Bean
     public JwtDecoder jwtDecoder() {
