@@ -6,6 +6,8 @@ eureka:
     fetchRegistry: true
     serviceUrl:
       defaultZone: ${EUREKA.CLIENT.SERVICE_URL.DEFAULT_ZONE}
+    healthcheck:
+      enabled: true
 
 spring:
   security:
