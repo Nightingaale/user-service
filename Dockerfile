@@ -1,7 +1,7 @@
 FROM eclipse-temurin:17-jre AS builder
 WORKDIR /extracted
 COPY build/libs/*.jar user-service.jar
-RUN java -Djarmode=layertools -jar auth-service.jar extract
+RUN java -Djarmode=layertools -jar user-service.jar extract
 
 FROM eclipse-temurin:17-jdk
 WORKDIR /application
