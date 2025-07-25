@@ -21,6 +21,7 @@ public class UserEntity {
     @JsonProperty("_id")
     private String id;
 
+    @JsonProperty("userId")
     private String userId;
 
     @Size(max = 16)
