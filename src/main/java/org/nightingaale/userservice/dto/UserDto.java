@@ -16,7 +16,7 @@ public class UserDto {
     @JsonIgnore
     private String id;
 
-    @JsonProperty("userId")
+    @JsonIgnore
     private String userId;
     private String username;
     private String firstName;
