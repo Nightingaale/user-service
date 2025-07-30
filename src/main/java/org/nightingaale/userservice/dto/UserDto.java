@@ -22,7 +22,7 @@ public class UserDto {
     private String firstName;
     private String lastname;
 
-    @JsonProperty("user-bio")
+    @JsonProperty("bio")
     private List<String> bio;
 
     private LocalDateTime createdInfoAt;

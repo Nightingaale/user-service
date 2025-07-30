@@ -33,7 +33,7 @@ public class UserEntity {
     @Size(max = 32)
     private String lastname;
 
-    @JsonProperty("user-bio")
+    @JsonProperty("bio")
     @Size(max = 256)
     private List<String> bio = new ArrayList<>();
 
