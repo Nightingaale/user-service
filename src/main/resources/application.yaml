@@ -19,3 +19,9 @@ spring:
             locator:
               lower-case-service-id: true
               enabled: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: prometheus
