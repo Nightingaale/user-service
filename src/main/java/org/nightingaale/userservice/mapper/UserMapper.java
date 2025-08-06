@@ -6,9 +6,10 @@ import org.nightingaale.userservice.dto.UserDto;
 import org.nightingaale.userservice.entity.UserEntity;
 
 @Mapper(componentModel = "spring")
-public interface UsersInfoMapper {
+public interface UserMapper {
     @Mapping(target = "createdInfoAt", ignore = true)
     @Mapping(target = "updatedInfoAt", ignore = true)
+
     UserEntity toEntity(UserDto dto);
     UserDto toDto(UserEntity entity);
 }
