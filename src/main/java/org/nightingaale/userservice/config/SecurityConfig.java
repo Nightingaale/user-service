@@ -27,7 +27,7 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests
-                                .requestMatchers("/api/v1/openapi-docs/**", "/actuator/**", "/aggregate/**").permitAll()
+                                .requestMatchers("/actuator/**", "/aggregate/**").permitAll()
                 .anyRequest().authenticated()
                 )
 
