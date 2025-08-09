@@ -2,10 +2,11 @@ package org.nightingaale.userservice.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.nightingaale.userservice.dto.UserDto;
-import org.nightingaale.userservice.entity.UserEntity;
-import org.nightingaale.userservice.mapper.UsersInfoMapper;
-import org.nightingaale.userservice.repository.UserRepository;
+import org.nightingaale.userservice.entity.UserProfileEntity;
+import org.nightingaale.userservice.event.UserRegistrationEvent;
+import org.nightingaale.userservice.mapper.UserRegistrationMapper;
+import org.nightingaale.userservice.repository.UserProfileRepository;
+import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -13,28 +14,37 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class UserService {
 
-    private final UsersInfoMapper usersInfoMapper;
-    private final UserRepository userRepository;
+    private final UserProfileRepository userRepository;
+    private final UserRegistrationMapper userRegistrationMapper;
 
-    public void createProfile(UserDto userDto) {
+    @KafkaListener(topics = "user-registration", groupId = "user-service")
+    public void createProfile(UserRegistrationEvent event) {
         try {
-            if (userRepository.existsById(userDto.getId())) {
-                log.warn("[User with id: " + userDto.getId() + " already exists]");
+            if (userRepository.existsById(event.getUserId())) {
+                log.warn("[User with id: " + event.getUserId() + " already exists]");
                 return;
             }
 
-            UserDto event = new UserDto();
-            event.setUsername(userDto.getUsername());
-            event.setFirstName(userDto.getFirstName());
-            event.setLastname(userDto.getLastname());
-            event.setBio(userDto.getBio());
-
-            UserEntity userEntity = usersInfoMapper.toEntity(userDto);
+            UserProfileEntity userEntity = userRegistrationMapper.fromRegistrationEvent(event);
             userRepository.save(userEntity);
-            log.info("[User's info with id: " + userDto.getId() + " created]");
+
+            log.info("[User's profile with id: " + event.getUserId() + "] has been created");
+        } catch (RuntimeException e) {
+            log.error("[User's profile with id: " + event.getUserId() + "] could not be created", e);
         }
-        catch (RuntimeException e) {
-            log.error("[User's info cannot be created. Error: " + e.getMessage() + "]");
+    }
+
+    public void deleteProfile(String userId) {
+        try {
+            if (userRepository.existsById(userId)) {
+                log.warn("[User with id: " + userId + " does not exist]");
+                throw new RuntimeException("User profile is not found");
+            }
+
+            userRepository.deleteById(userId);
+            log.info("[User's info with id: " + userId + "has been deleted]");
+        } catch (RuntimeException e) {
+            log.error("[User's info with id: " + userId + "] could not be deleted", e);
         }
     }
 }
