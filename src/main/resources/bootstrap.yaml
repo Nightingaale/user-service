@@ -1,13 +1,13 @@
 spring:
   config:
-    import: vault://secret/dev/user-service
+    import: vault://secret/prod/user-service
   cloud:
     vault:
-      uri: http://localhost:8200
+      uri: http://vault:8200
       authentication: token
       token: root
       kv:
         enabled: true
         backend: secret
-        application-name: dev/user-service
+        application-name: prod/user-service
       enabled: true
