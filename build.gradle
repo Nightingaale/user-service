@@ -59,7 +59,6 @@ dependencies {
 
     runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
 
-    runtimeOnly 'org.springframework.boot:spring-boot-docker-compose'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 dependencyManagement {
