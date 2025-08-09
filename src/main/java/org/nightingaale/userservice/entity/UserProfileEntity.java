@@ -13,10 +13,10 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@Document(collection = "user_info")
+@Document(collection = "users_info")
 @Getter
 @Setter
-public class UserEntity {
+public class UserProfileEntity {
     @Id
     @JsonProperty("_id")
     private String id;
