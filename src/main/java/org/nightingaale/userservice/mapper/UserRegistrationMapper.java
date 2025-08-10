@@ -5,7 +5,7 @@ import org.mapstruct.Mapping;
 import org.nightingaale.userservice.entity.UserProfileEntity;
 import org.nightingaale.userservice.event.UserRegistrationEvent;
 
-@Mapper
+@Mapper(componentModel = "spring")
 public interface UserRegistrationMapper {
     @Mapping(source = "userId", target = "id")
     @Mapping(target = "firstName", ignore = true)
