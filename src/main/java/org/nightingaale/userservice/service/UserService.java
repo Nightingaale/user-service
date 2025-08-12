@@ -17,7 +17,7 @@ public class UserService {
     private final UserProfileRepository userRepository;
     private final UserRegistrationMapper userRegistrationMapper;
 
-    @KafkaListener(topics = "user-registration", groupId = "user-service")
+    @KafkaListener(topics = "user-registration", groupId = "user-service", containerFactory = "kafkaListenerContainerFactoryUserRegistered")
     public void createProfile(UserRegistrationEvent event) {
         try {
             if (userRepository.existsById(event.getUserId())) {
