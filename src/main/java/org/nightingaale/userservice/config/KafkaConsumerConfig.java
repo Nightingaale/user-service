@@ -27,20 +27,20 @@ public class KafkaConsumerConfig {
 
     @Bean
     public ConsumerFactory<String, UserRegistrationEvent> consumerUserRegisteredFactory() {
-        JsonDeserializer<UserRegistrationEvent> deserializer = new JsonDeserializer<>(UserRegistrationEvent.class);
-        deserializer.addTrustedPackages("*");
-        deserializer.setUseTypeMapperForKey(false);
-
-        ErrorHandlingDeserializer<UserRegistrationEvent> errorHandlingDeserializer = new ErrorHandlingDeserializer<>(deserializer);
-
         Map<String, Object> consumerConfig = new HashMap<>();
 
         consumerConfig.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         consumerConfig.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-        consumerConfig.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, errorHandlingDeserializer);
+        consumerConfig.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ErrorHandlingDeserializer.class);
 
-        return new DefaultKafkaConsumerFactory<>(consumerConfig, new StringDeserializer(), errorHandlingDeserializer);
+        consumerConfig.put(ErrorHandlingDeserializer.VALUE_DESERIALIZER_CLASS, JsonDeserializer.class);
+
+        consumerConfig.put(JsonDeserializer.VALUE_DEFAULT_TYPE, "org.nightingaale.userservice.event.UserRegistrationEvent");
+        consumerConfig.put(JsonDeserializer.TRUSTED_PACKAGES, "*");
+
+        return new DefaultKafkaConsumerFactory<>(consumerConfig);
     }
+
 
     @Bean
     public KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<String, UserRegistrationEvent>> kafkaListenerContainerFactoryUserRegistered(
