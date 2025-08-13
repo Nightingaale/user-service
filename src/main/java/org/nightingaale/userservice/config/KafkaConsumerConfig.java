@@ -35,7 +35,8 @@ public class KafkaConsumerConfig {
 
         consumerConfig.put(ErrorHandlingDeserializer.VALUE_DESERIALIZER_CLASS, JsonDeserializer.class);
 
-        consumerConfig.put(JsonDeserializer.VALUE_DEFAULT_TYPE, "org.nightingaale.userservice.event.UserRegistrationEvent");
+        consumerConfig.put(JsonDeserializer.USE_TYPE_INFO_HEADERS, false);
+        consumerConfig.put(JsonDeserializer.VALUE_DEFAULT_TYPE, UserRegistrationEvent.class.getName());
         consumerConfig.put(JsonDeserializer.TRUSTED_PACKAGES, "*");
 
         return new DefaultKafkaConsumerFactory<>(consumerConfig);
