@@ -1,8 +1,6 @@
 package org.nightingaale.userservice.controller;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.nightingaale.userservice.dto.UserProfileDto;
 import org.nightingaale.userservice.event.UserRegistrationEvent;
 import org.nightingaale.userservice.service.UserService;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +17,7 @@ public class Controller {
 
     private final UserService userService;
 
-    @PostMapping("/createInfo")
+    @PostMapping
     public ResponseEntity<?> createProfileFromEvent(@RequestBody UserRegistrationEvent event, @AuthenticationPrincipal Jwt jwt) {
         UUID userId = UUID.fromString(jwt.getSubject());
         event.setUserId(userId.toString());
