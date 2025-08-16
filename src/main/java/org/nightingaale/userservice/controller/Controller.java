@@ -25,7 +25,7 @@ public class Controller {
         return ResponseEntity.ok("[User's profile information has successfully been created]");
     }
 
-    @DeleteMapping("/deleteProfile/{id}")
+    @DeleteMapping
     public ResponseEntity<?> deleteProfile(@AuthenticationPrincipal Jwt jwt) {
         String userId = jwt.getSubject();
         userService.deleteProfile(userId);
