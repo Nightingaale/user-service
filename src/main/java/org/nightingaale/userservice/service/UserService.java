@@ -3,12 +3,14 @@ package org.nightingaale.userservice.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.nightingaale.userservice.entity.UserDataEntity;
+import org.nightingaale.userservice.entity.UserProfileEntity;
 import org.nightingaale.userservice.event.UserRegistrationEvent;
+import org.nightingaale.userservice.event.UserRemoveEvent;
 import org.nightingaale.userservice.mapper.UserRegistrationEventMapper;
 import org.nightingaale.userservice.repository.UserDataRepository;
 import org.nightingaale.userservice.repository.UserProfileRepository;
-import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
@@ -19,7 +21,7 @@ public class UserService {
     private final UserRegistrationEventMapper userRegistrationEventMapper;
     private final UserDataRepository userDataRepository;
 
-    @KafkaListener(topics = "user-registration", groupId = "user-service", containerFactory = "kafkaListenerContainerFactoryUserRegistered")
+    @Transactional
     public void createProfile(UserRegistrationEvent event) {
         try {
             if (userProfileRepository.existsById(event.getUserId())) {
@@ -30,23 +32,29 @@ public class UserService {
             UserDataEntity userEntity = userRegistrationEventMapper.toUserDataEntity(event);
             userDataRepository.save(userEntity);
 
-            log.info("[User's profile with id: " + event.getUserId() + "] has been created");
+            UserProfileEntity userProfileEntity = userRegistrationEventMapper.toUserProfileEntity(event);
+            userProfileRepository.save(userProfileEntity);
+
+            log.info("[User with id: " + event.getUserId() + "] has been created");
         } catch (RuntimeException e) {
-            log.error("[User's profile with id: " + event.getUserId() + "] could not be created", e);
+            log.error("[User with id: " + event.getUserId() + "] could not be created", e);
         }
     }
 
-    public void deleteProfile(String userId) {
+    @Transactional
+    public void deleteProfile(UserRemoveEvent event) {
         try {
-            if (userProfileRepository.existsById(userId)) {
-                log.warn("[User with id: " + userId + " does not exist]");
-                throw new RuntimeException("User profile is not found");
+            if (!userProfileRepository.existsById(event.getUserId())) {
+                log.warn("[User with ID: " + event.getUserId() + " does not exist]");
+                return;
             }
 
-            userProfileRepository.deleteById(userId);
-            log.info("[User's info with id: " + userId + "has been deleted]");
+            userDataRepository.deleteById(event.getUserId());
+            userProfileRepository.deleteById(event.getUserId());
+
+            log.info("[User with ID: " + event.getUserId() + "] has been deleted");
         } catch (RuntimeException e) {
-            log.error("[User's info with id: " + userId + "] could not be deleted", e);
+            log.error("[User with ID: " + event.getUserId() + "] could not be deleted", e);
         }
     }
 }
