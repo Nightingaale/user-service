@@ -8,6 +8,7 @@ import org.nightingaale.userservice.event.UserRegistrationEvent;
 @Mapper(componentModel = "spring")
 public interface UserRegistrationMapper {
     @Mapping(source = "userId", target = "id")
+    @Mapping(source = "userId", target = "userId")
     @Mapping(target = "firstName", ignore = true)
     @Mapping(target = "lastName", ignore = true)
     @Mapping(target = "bio", ignore = true)
