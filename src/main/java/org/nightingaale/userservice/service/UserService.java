@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.nightingaale.userservice.entity.UserProfileEntity;
 import org.nightingaale.userservice.event.UserRegistrationEvent;
-import org.nightingaale.userservice.mapper.UserRegistrationMapper;
+import org.nightingaale.userservice.mapper.UserRegistrationEventMapper;
 import org.nightingaale.userservice.repository.UserProfileRepository;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 public class UserService {
 
     private final UserProfileRepository userProfileRepository;
-    private final UserRegistrationMapper userRegistrationMapper;
+    private final UserRegistrationEventMapper userRegistrationEventMapper;
 
     @KafkaListener(topics = "user-registration", groupId = "user-service", containerFactory = "kafkaListenerContainerFactoryUserRegistered")
     public void createProfile(UserRegistrationEvent event) {
@@ -25,7 +25,7 @@ public class UserService {
                 return;
             }
 
-            UserProfileEntity userEntity = userRegistrationMapper.fromRegistrationEvent(event);
+            UserProfileEntity userEntity = userRegistrationEventMapper.toUserProfileEntity(event);
             userProfileRepository.save(userEntity);
 
             log.info("[User's profile with id: " + event.getUserId() + "] has been created");
