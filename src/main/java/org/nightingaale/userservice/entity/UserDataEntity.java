@@ -1,6 +1,7 @@
 package org.nightingaale.userservice.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
@@ -17,31 +18,22 @@ import java.time.LocalDateTime;
 public class UserDataEntity {
 
     @Id
-    private String id;
+    private String correlationId;
 
-    @Column(nullable = false, unique = true)
-    @Size(max = 32)
+    @NotNull
+    private String userId;
+
+    @NotNull
+    @Size(min = 5, max = 20)
     private String username;
 
     @NotNull
-    @Size(min = 8, max = 64)
-    private String password;
-
-    @NotNull
-    @Size(max = 32)
-    private String firstName;
-
-    @NotNull
-    @Size(max = 32)
-    private String lastName;
-
-    @Column(nullable = false, unique = true)
-    @Size(max = 64)
+    @Email
     private String email;
 
     @NotNull
-    @Size(max = 15)
-    private String phoneNumber;
+    @Size(min = 8)
+    private String password;
 
     @CreationTimestamp
     private LocalDateTime createdAt;
