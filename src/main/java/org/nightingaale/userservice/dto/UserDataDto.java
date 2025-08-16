@@ -10,13 +10,11 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class UserDataDto {
 
-    private String id;
+    private String correlationId;
+    private String userId;
     private String username;
     private String password;
-    private String firstName;
-    private String lastName;
     private String email;
-    private String phoneNumber;
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

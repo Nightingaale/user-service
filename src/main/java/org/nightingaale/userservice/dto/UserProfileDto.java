@@ -1,7 +1,6 @@
 package org.nightingaale.userservice.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,7 +8,6 @@ import lombok.Setter;
 import org.springframework.data.annotation.Id;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Getter
 @Setter
@@ -18,16 +16,13 @@ import java.util.List;
 public class UserProfileDto {
     @Id
     @JsonIgnore
-    private String id;
+    private String correlationId;
 
     @JsonIgnore
     private String userId;
     private String username;
-    private String firstName;
-    private String lastName;
-
-    @JsonProperty("bio")
-    private List<String> bio;
+    private String info;
+    private Long balance;
 
     private LocalDateTime createdInfoAt;
     private LocalDateTime updatedInfoAt;
