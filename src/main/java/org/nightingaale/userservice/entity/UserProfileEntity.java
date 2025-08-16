@@ -1,6 +1,7 @@
 package org.nightingaale.userservice.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.persistence.Column;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
@@ -31,7 +32,7 @@ public class UserProfileEntity {
     private String firstName;
 
     @Size(max = 32)
-    private String lastname;
+    private String lastName;
 
     @JsonProperty("bio")
     @Size(max = 256)

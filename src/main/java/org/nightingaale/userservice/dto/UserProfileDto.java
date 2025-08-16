@@ -24,7 +24,7 @@ public class UserProfileDto {
     private String userId;
     private String username;
     private String firstName;
-    private String lastname;
+    private String lastName;
 
     @JsonProperty("bio")
     private List<String> bio;
