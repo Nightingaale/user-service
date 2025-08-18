@@ -44,7 +44,6 @@ public class UserService {
         }
     }
 
-    @Transactional
     public void deleteProfile(UserRemoveEvent event) {
         try {
             if (!userDataRepository.existsById(event.getUserId())) {
@@ -53,7 +52,6 @@ public class UserService {
             }
 
             userDataRepository.deleteByUserId(event.getUserId());
-            userProfileRepository.deleteByUserId(event.getUserId());
 
             userRemovedTemplate.send("user-removed", new UserRemovedEvent(event.getCorrelationId(), event.getUserId(), false));
         } catch (RuntimeException e) {
