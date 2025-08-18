@@ -26,7 +26,7 @@ public class Controller {
         return ResponseEntity.ok("[User has successfully been created]");
     }
 
-    @DeleteMapping
+    @PostMapping
     public ResponseEntity<?> deleteProfile(@RequestBody UserRemoveEvent event, @AuthenticationPrincipal Jwt jwt) {
         UUID userId = UUID.fromString(jwt.getSubject());
         event.setUserId(userId.toString());
