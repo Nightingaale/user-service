@@ -13,6 +13,8 @@ import org.nightingaale.userservice.repository.UserProfileRepository;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.event.TransactionPhase;
+import org.springframework.transaction.event.TransactionalEventListener;
 
 @Slf4j
 @Service
@@ -44,7 +46,7 @@ public class UserService {
         }
     }
 
-    @Transactional
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void deleteProfile(UserRemoveEvent event) {
         try {
             if (!userDataRepository.existsById(event.getUserId())) {
