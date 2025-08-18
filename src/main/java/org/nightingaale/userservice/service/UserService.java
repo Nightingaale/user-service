@@ -49,7 +49,6 @@ public class UserService {
         try {
             if (userDataRepository.existsById(event.getUserId())) {
                 log.warn("[User with ID: {} exists. Try to delete data...]", event.getUserId());
-                return;
             }
 
             userDataRepository.deleteByUserId(event.getUserId());
