@@ -44,18 +44,20 @@ public class UserService {
         }
     }
 
+    @Transactional
     public void deleteProfile(UserRemoveEvent event) {
         try {
-            if (!userDataRepository.existsById(event.getUserId())) {
-                log.warn("[User with ID: {} does not exists]", event.getUserId());
+            if (userDataRepository.existsById(event.getUserId())) {
+                log.warn("[User with ID: {} exists. Try to delete data...]", event.getUserId());
                 return;
             }
 
             userDataRepository.deleteByUserId(event.getUserId());
+            userProfileRepository.deleteByUserId(event.getUserId());
 
             userRemovedTemplate.send("user-removed", new UserRemovedEvent(event.getCorrelationId(), event.getUserId(), false));
         } catch (RuntimeException e) {
-            log.error("[User with ID: {} could not be deleted", event.getUserId(), e);
+            log.error("[User with ID: {} could not be deleted]", event.getUserId(), e);
         }
     }
 
