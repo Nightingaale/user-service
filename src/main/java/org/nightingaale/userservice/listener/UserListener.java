@@ -15,15 +15,15 @@ public class UserListener {
 
     private final UserService userService;
 
-    @KafkaListener(topics = "user-registration", groupId = "user-service", containerFactory = "kafkaListenerContainerFactoryUserRegistered")
+    @KafkaListener(topics = "user-registration", groupId = "user-service", containerFactory = "kafkaListenerContainerFactoryUserRegistration")
     public void userRegistration(UserRegistrationEvent event) {
-        log.info("[Received user-registration event: " + event + "]");
+        log.info("[Received user-registration Kafka event: {}, {}]", event.getCorrelationId(), event.getUserId());
         userService.createProfile(event);
     }
 
     @KafkaListener(topics = "user-remove", groupId = "user-service", containerFactory = "kafkaListenerContainerFactoryUserRemove")
     public void userRemoval(UserRemoveEvent event) {
-        log.info("[Received user-remove event: " + event + "]");
+        log.info("[Received user-remove Kafka event: {}, {}]", event.getCorrelationId(), event.getUserId());
         userService.deleteProfile(event);
     }
 }
