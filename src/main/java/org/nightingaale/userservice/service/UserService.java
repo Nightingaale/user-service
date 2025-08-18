@@ -52,8 +52,8 @@ public class UserService {
                 return;
             }
 
-            userDataRepository.deleteById(event.getUserId());
-            userProfileRepository.deleteById(event.getUserId());
+            userDataRepository.deleteByUserId(event.getUserId());
+            userProfileRepository.deleteByUserId(event.getUserId());
 
             userRemovedTemplate.send("user-removed", new UserRemovedEvent(event.getCorrelationId(), event.getUserId(), false));
         } catch (RuntimeException e) {
