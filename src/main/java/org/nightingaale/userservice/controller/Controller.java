@@ -18,7 +18,7 @@ public class Controller {
 
     private final UserService userService;
 
-    @PostMapping
+    @PostMapping("/registered")
     public ResponseEntity<?> createProfileFromEvent(@RequestBody UserRegistrationEvent event, @AuthenticationPrincipal Jwt jwt) {
         UUID userId = UUID.fromString(jwt.getSubject());
         event.setUserId(userId.toString());
@@ -26,7 +26,7 @@ public class Controller {
         return ResponseEntity.ok("[User has successfully been created]");
     }
 
-    @PostMapping
+    @PostMapping("/removed")
     public ResponseEntity<?> deleteProfile(@RequestBody UserRemoveEvent event, @AuthenticationPrincipal Jwt jwt) {
         UUID userId = UUID.fromString(jwt.getSubject());
         event.setUserId(userId.toString());
