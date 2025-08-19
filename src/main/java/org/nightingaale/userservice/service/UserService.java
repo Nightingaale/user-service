@@ -48,13 +48,14 @@ public class UserService {
     public void deleteProfile(UserRemoveEvent event) {
         try {
             if (userDataRepository.existsById(event.getUserId())) {
-                log.warn("[User with ID: {} exists. Try to delete data...]", event.getUserId());
+                log.info("[User with ID: {} exists. Try to delete data...]", event.getUserId());
+
+                userDataRepository.deleteByUserId(event.getUserId());
+                userProfileRepository.deleteByUserId(event.getUserId());
+
+                userRemovedTemplate.send("user-removed", new UserRemovedEvent(event.getCorrelationId(), event.getUserId(), false));
+                log.info("[Send Kafka event with user ID: {}]", event.getUserId());
             }
-
-            userDataRepository.deleteByUserId(event.getUserId());
-            userProfileRepository.deleteByUserId(event.getUserId());
-
-            userRemovedTemplate.send("user-removed", new UserRemovedEvent(event.getCorrelationId(), event.getUserId(), false));
         } catch (RuntimeException e) {
             log.error("[User with ID: {} could not be deleted]", event.getUserId(), e);
         }
