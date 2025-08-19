@@ -55,7 +55,7 @@ public class UserService {
             userProfileRepository.deleteByUserId(event.getUserId());
 
             userRemovedTemplate.send("user-removed", new UserRemovedEvent(event.getCorrelationId(), event.getUserId(), false));
-            log.info("[Send Kafka user-removed event: {}", event.getUserId());
+            log.info("[Send Kafka user-removed event to auth-service: {}", event.getUserId());
         } catch (RuntimeException e) {
             log.error("[User with ID: {} could not be deleted]", event.getUserId(), e);
         }
