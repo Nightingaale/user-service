@@ -41,7 +41,7 @@ public class UserService {
             UserProfileEntity userProfileEntity = userRegistrationEventMapper.toUserProfileEntity(event);
             userProfileRepository.save(userProfileEntity);
 
-            userRegisteredTemplate.send("user-registered", new UserRegisteredEvent(event.getUserId(), event.getCorrelationId(), true));
+            userRegisteredTemplate.send("user-registered", new UserRegisteredEvent(event.getCorrelationId(), event.getUserId(), true));
             log.info("[Send Kafka user-registered event to auth-service: {}", event.getUserId());
         } catch (RuntimeException e) {
             log.error("[User with ID: {} could not be created", event.getUserId(), e);
