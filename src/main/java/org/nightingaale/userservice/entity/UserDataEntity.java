@@ -35,7 +35,6 @@ public class UserDataEntity {
     @Size(min = 8)
     private String password;
 
-    @NotNull
     private Long balance = 0L;
 
     @CreationTimestamp

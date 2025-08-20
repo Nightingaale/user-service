@@ -31,7 +31,6 @@ public class UserProfileEntity {
     @Size(max = 256)
     private String info;
 
-    @NotNull
     private Long balance = 0L;
 
     private List<String> ownedItems;
