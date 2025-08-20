@@ -35,10 +35,11 @@ public class Controller {
         return ResponseEntity.ok("[User has been successfully deleted]");
     }
 
-    @GetMapping("/info/{id}")
-    public ResponseEntity<?> getInfo(@RequestBody UserProfileDto profile, @AuthenticationPrincipal Jwt jwt) {
-        UUID userId = UUID.fromString(jwt.getSubject());
-        profile.setUserId(userId.toString());
+    @GetMapping("/info/{userId}")
+    public ResponseEntity<?> getInfo(@PathVariable String userId, @AuthenticationPrincipal Jwt jwt) {
+        UserProfileDto profile = new UserProfileDto();
+        profile.setUserId(userId);
+        profile.setCorrelationId(jwt.getSubject());
         userService.getUser(profile);
         return ResponseEntity.ok("[User has been successfully retrieved]");
     }
