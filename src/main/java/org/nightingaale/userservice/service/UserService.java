@@ -2,8 +2,10 @@ package org.nightingaale.userservice.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.nightingaale.userservice.dto.UserProfileDto;
 import org.nightingaale.userservice.entity.UserDataEntity;
 import org.nightingaale.userservice.entity.UserProfileEntity;
+import org.nightingaale.userservice.event.UserRegisteredEvent;
 import org.nightingaale.userservice.event.UserRegistrationEvent;
 import org.nightingaale.userservice.event.UserRemoveEvent;
 import org.nightingaale.userservice.event.UserRemovedEvent;
@@ -23,6 +25,7 @@ public class UserService {
     private final UserRegistrationEventMapper userRegistrationEventMapper;
     private final UserDataRepository userDataRepository;
     private final KafkaTemplate<String, UserRemovedEvent> userRemovedTemplate;
+    private final KafkaTemplate<String, UserRegisteredEvent> userRegisteredTemplate;
 
     @Transactional
     public void createProfile(UserRegistrationEvent event) {
@@ -38,7 +41,8 @@ public class UserService {
             UserProfileEntity userProfileEntity = userRegistrationEventMapper.toUserProfileEntity(event);
             userProfileRepository.save(userProfileEntity);
 
-            log.info("[User with ID: {} has been created", event.getUserId());
+            userRegisteredTemplate.send("user-registered", new UserRegisteredEvent(event.getUserId(), event.getCorrelationId(), true));
+            log.info("[Send Kafka user-registered event to auth-service: {}", event.getUserId());
         } catch (RuntimeException e) {
             log.error("[User with ID: {} could not be created", event.getUserId(), e);
         }
@@ -61,7 +65,7 @@ public class UserService {
         }
     }
 
-    public void getUser(UserProfileEntity profile) {
+    public void getUser(UserProfileDto profile) {
         try {
             if (!userProfileRepository.existsById(profile.getUserId())) {
                 log.warn("[User with ID: {} does not exists in MongoDB]", profile.getUserId());
