@@ -1,6 +1,7 @@
 package org.nightingaale.userservice.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.nightingaale.userservice.dto.UserProfileDto;
 import org.nightingaale.userservice.event.UserRegistrationEvent;
 import org.nightingaale.userservice.event.UserRemoveEvent;
 import org.nightingaale.userservice.service.UserService;
@@ -32,5 +33,13 @@ public class Controller {
         event.setUserId(userId.toString());
         userService.deleteProfile(event);
         return ResponseEntity.ok("[User has been successfully deleted]");
+    }
+
+    @GetMapping("/info/{id}")
+    public ResponseEntity<?> getInfo(@RequestBody UserProfileDto profile, @AuthenticationPrincipal Jwt jwt) {
+        UUID userId = UUID.fromString(jwt.getSubject());
+        profile.setUserId(userId.toString());
+        userService.getUser(profile);
+        return ResponseEntity.ok("[User has been successfully retrieved]");
     }
 }
