@@ -1,8 +1,6 @@
 package org.nightingaale.userservice.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.persistence.Column;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,8 +8,10 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Document(collection = "users_info")
@@ -33,14 +33,17 @@ public class UserProfileEntity {
 
     private Long balance = 0L;
 
-    private List<String> ownedItems;
+    @Field(value = "ownedItems")
+    private List<String> ownedProducts = new ArrayList<>();
 
-    private List<String> purchaseHistory;
+    @Field(value = "purchaseHistory")
+    private List<String> purchaseHistory = new ArrayList<>();
 
     @CreatedDate
-    @Column(updatable = false)
+    @Field(value = "createdInfoAt")
     private LocalDateTime createdInfoAt;
 
     @LastModifiedDate
+    @Field(value = "updatedInfoAt")
     private LocalDateTime updatedInfoAt;
 }
