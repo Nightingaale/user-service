@@ -1,6 +1,7 @@
 package org.nightingaale.userservice.controller;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.nightingaale.userservice.dto.UserProfileDto;
 import org.nightingaale.userservice.event.UserRegistrationEvent;
 import org.nightingaale.userservice.event.UserRemoveEvent;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/v1/users")
 @RequiredArgsConstructor
@@ -41,6 +43,7 @@ public class Controller {
         profile.setUserId(userId);
         profile.setCorrelationId(jwt.getSubject());
         userService.getUser(profile);
-        return ResponseEntity.ok("[User has been successfully retrieved]");
+        log.info("User with ID: {} has been successfully retrieved", userId);
+        return ResponseEntity.ok(profile);
     }
 }

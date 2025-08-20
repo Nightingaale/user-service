@@ -74,9 +74,9 @@ public class UserService {
 
             userProfileRepository.findById(profile.getUserId());
 
-            log.info("[User with ID: {} has been found", profile.getUserId());
+            log.info("[User with ID: {} has been found]", profile.getUserId());
         } catch (RuntimeException e) {
-            log.error("[User with ID: {} could not be found", profile.getUserId(), e);
+            log.error("[User with ID: {} could not be found]", profile.getUserId(), e);
         }
     }
 }
