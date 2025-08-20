@@ -2,6 +2,7 @@ package org.nightingaale.userservice.config;
 
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
+import org.nightingaale.userservice.event.UserRegisteredEvent;
 import org.nightingaale.userservice.event.UserRemovedEvent;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -37,5 +38,15 @@ public class KafkaProducerConfig {
     @Bean
     public KafkaTemplate<String, UserRemovedEvent> userRemovedKafkaTemplate() {
         return new KafkaTemplate<>(userRemovedProducerFactory());
+    }
+
+    @Bean
+    public ProducerFactory<String, UserRegisteredEvent> userRegisteredProducerFactory() {
+        return new DefaultKafkaProducerFactory<>(baseConfig());
+    }
+
+    @Bean
+    public KafkaTemplate<String, UserRegisteredEvent> userRegisteredKafkaTemplate() {
+        return new KafkaTemplate<>(userRegisteredProducerFactory());
     }
 }

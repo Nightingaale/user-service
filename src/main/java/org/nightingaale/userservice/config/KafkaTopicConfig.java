@@ -9,8 +9,14 @@ import org.springframework.kafka.config.TopicBuilder;
 public class KafkaTopicConfig {
 
     @Bean
-    public NewTopic userTopic() {
+    public NewTopic userRemovedTopic() {
         return TopicBuilder.name("user-removed")
+                .build();
+    }
+
+    @Bean
+    public NewTopic userRegisteredTopic() {
+        return TopicBuilder.name("user-registered")
                 .build();
     }
 }
