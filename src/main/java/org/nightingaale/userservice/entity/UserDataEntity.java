@@ -20,7 +20,6 @@ public class UserDataEntity {
     @Id
     private String correlationId;
 
-    @NotNull
     private String userId;
 
     @NotNull
@@ -29,13 +28,18 @@ public class UserDataEntity {
 
     @NotNull
     @Email
+    @Size(max = 60)
     private String email;
 
     @NotNull
     @Size(min = 8)
     private String password;
 
+    @NotNull
+    private Long balance = 0L;
+
     @CreationTimestamp
+    @Column(updatable = false)
     private LocalDateTime createdAt;
 
     @UpdateTimestamp
