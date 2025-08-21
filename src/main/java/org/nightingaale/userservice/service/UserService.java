@@ -74,15 +74,6 @@ public class UserService {
 
             userProfileRepository.findById(profile.getUserId());
 
-            UserProfileDto dto = new UserProfileDto();
-            dto.setUserId(profile.getUserId());
-            dto.setUsername(profile.getUsername());
-            dto.setInfo(profile.getInfo());
-            dto.setBalance(profile.getBalance());
-
-            dto.setOwnedProducts(profile.getOwnedProducts());
-            dto.setPurchaseHistory(profile.getPurchaseHistory());
-
             log.info("[User with ID: {} has been found]", profile.getUserId());
         } catch (RuntimeException e) {
             log.error("[User with ID: {} could not be found]", profile.getUserId(), e);

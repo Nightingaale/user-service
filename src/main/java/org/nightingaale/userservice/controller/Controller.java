@@ -38,11 +38,20 @@ public class Controller {
     }
 
     @GetMapping("/info/{userId}")
-    public ResponseEntity<?> getInfo(@PathVariable String userId, @AuthenticationPrincipal Jwt jwt) {
+    public ResponseEntity<?> getInfo(@RequestBody UserProfileDto profile, @AuthenticationPrincipal Jwt jwt) {
+
         UserProfileDto dto = new UserProfileDto();
         dto.setCorrelationId(jwt.getSubject());
+        dto.setUserId(profile.getUserId());
+        dto.setUsername(profile.getUsername());
+        dto.setInfo(profile.getInfo());
+        dto.setBalance(profile.getBalance());
+
+        dto.setOwnedProducts(profile.getOwnedProducts());
+        dto.setPurchaseHistory(profile.getPurchaseHistory());
+
         userService.getUser(dto);
-        log.info("User with ID: {} has been successfully retrieved", userId);
+        log.info("User with ID: {} has been successfully retrieved", profile.getUserId());
         return ResponseEntity.ok(dto);
     }
 }
