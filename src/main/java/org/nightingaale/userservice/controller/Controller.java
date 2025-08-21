@@ -38,20 +38,9 @@ public class Controller {
     }
 
     @GetMapping("/info/{userId}")
-    public ResponseEntity<?> getInfo(@RequestBody UserProfileDto profile, @AuthenticationPrincipal Jwt jwt) {
-
-        UserProfileDto dto = new UserProfileDto();
-        dto.setCorrelationId(jwt.getSubject());
-        dto.setUserId(profile.getUserId());
-        dto.setUsername(profile.getUsername());
-        dto.setInfo(profile.getInfo());
-        dto.setBalance(profile.getBalance());
-
-        dto.setOwnedProducts(profile.getOwnedProducts());
-        dto.setPurchaseHistory(profile.getPurchaseHistory());
-
-        userService.getUser(dto);
-        log.info("User with ID: {} has been successfully retrieved", profile.getUserId());
-        return ResponseEntity.ok(dto);
+    public ResponseEntity<?> getInfo(@AuthenticationPrincipal Jwt jwt) {
+        return userService.getProfileById(jwt.getSubject())
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 }

@@ -9,6 +9,7 @@ import org.nightingaale.userservice.event.UserRegisteredEvent;
 import org.nightingaale.userservice.event.UserRegistrationEvent;
 import org.nightingaale.userservice.event.UserRemoveEvent;
 import org.nightingaale.userservice.event.UserRemovedEvent;
+import org.nightingaale.userservice.mapper.UserProfileMapper;
 import org.nightingaale.userservice.mapper.UserRegistrationEventMapper;
 import org.nightingaale.userservice.repository.UserDataRepository;
 import org.nightingaale.userservice.repository.UserProfileRepository;
@@ -16,14 +17,17 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserService {
 
     private final UserProfileRepository userProfileRepository;
-    private final UserRegistrationEventMapper userRegistrationEventMapper;
     private final UserDataRepository userDataRepository;
+    private final UserRegistrationEventMapper userRegistrationEventMapper;
+    private final UserProfileMapper userProfileMapper;
     private final KafkaTemplate<String, UserRemovedEvent> userRemovedTemplate;
     private final KafkaTemplate<String, UserRegisteredEvent> userRegisteredTemplate;
 
@@ -65,18 +69,18 @@ public class UserService {
         }
     }
 
-    public void getUser(UserProfileDto profile) {
+    public Optional<UserProfileDto> getProfileById(String userId) {
         try {
-            if (!userProfileRepository.existsById(profile.getUserId())) {
-                log.warn("[User with ID: {} does not exists]", profile.getUserId());
-                return;
+            if (!userDataRepository.existsById(userId)) {
+                log.info("[User with ID: {} does not exists]", userId);
             }
 
-            userProfileRepository.findById(profile.getUserId());
+            return userProfileRepository.findById(userId)
+                    .map(userProfileMapper::toDto);
 
-            log.info("[User with ID: {} has been found]", profile.getUserId());
         } catch (RuntimeException e) {
-            log.error("[User with ID: {} could not be found]", profile.getUserId(), e);
+            log.error("[User with ID: {} could not be found]", userId, e);
+            return Optional.empty();
         }
     }
 }
