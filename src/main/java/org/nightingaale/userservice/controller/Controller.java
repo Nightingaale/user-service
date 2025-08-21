@@ -37,7 +37,7 @@ public class Controller {
         return ResponseEntity.ok("[User has been successfully deleted]");
     }
 
-    @GetMapping("/info/{userId}")
+    @GetMapping("/profile")
     public ResponseEntity<?> getInfo(@AuthenticationPrincipal Jwt jwt) {
         return userService.getProfileById(jwt.getSubject())
                 .map(ResponseEntity::ok)
