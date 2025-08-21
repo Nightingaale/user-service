@@ -71,8 +71,8 @@ public class UserService {
 
     public Optional<UserProfileDto> getProfileById(String userId) {
         try {
-            if (!userDataRepository.existsById(userId)) {
-                log.info("[User with ID: {} does not exists]", userId);
+            if (userProfileRepository.existsById(userId)) {
+                log.info("[User with ID: {} exists. Showing data...]", userId);
             }
 
             return userProfileRepository.findById(userId)
