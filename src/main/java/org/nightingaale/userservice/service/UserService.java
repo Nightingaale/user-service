@@ -68,11 +68,20 @@ public class UserService {
     public void getUser(UserProfileDto profile) {
         try {
             if (!userProfileRepository.existsById(profile.getUserId())) {
-                log.warn("[User with ID: {} does not exists in MongoDB]", profile.getUserId());
+                log.warn("[User with ID: {} does not exists]", profile.getUserId());
                 return;
             }
 
             userProfileRepository.findById(profile.getUserId());
+
+            UserProfileDto dto = new UserProfileDto();
+            dto.setUserId(profile.getUserId());
+            dto.setUsername(profile.getUsername());
+            dto.setInfo(profile.getInfo());
+            dto.setBalance(profile.getBalance());
+
+            dto.setOwnedProducts(profile.getOwnedProducts());
+            dto.setPurchaseHistory(profile.getPurchaseHistory());
 
             log.info("[User with ID: {} has been found]", profile.getUserId());
         } catch (RuntimeException e) {

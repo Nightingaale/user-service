@@ -39,11 +39,10 @@ public class Controller {
 
     @GetMapping("/info/{userId}")
     public ResponseEntity<?> getInfo(@PathVariable String userId, @AuthenticationPrincipal Jwt jwt) {
-        UserProfileDto profile = new UserProfileDto();
-        profile.setUserId(userId);
-        profile.setCorrelationId(jwt.getSubject());
-        userService.getUser(profile);
+        UserProfileDto dto = new UserProfileDto();
+        dto.setCorrelationId(jwt.getSubject());
+        userService.getUser(dto);
         log.info("User with ID: {} has been successfully retrieved", userId);
-        return ResponseEntity.ok(profile);
+        return ResponseEntity.ok(dto);
     }
 }
