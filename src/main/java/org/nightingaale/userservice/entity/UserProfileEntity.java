@@ -18,10 +18,11 @@ import java.util.List;
 @Getter
 @Setter
 public class UserProfileEntity {
-    @Id
+
     @JsonProperty("_id")
     private String correlationId;
 
+    @Id
     @JsonProperty("userId")
     private String userId;
 

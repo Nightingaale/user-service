@@ -2,7 +2,6 @@ package org.nightingaale.userservice.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
-import org.springframework.data.annotation.Id;
 
 import java.util.List;
 
@@ -14,7 +13,6 @@ public class UserProfileDto {
     @JsonIgnore
     private String correlationId;
 
-    @Id
     private String userId;
     private String username;
     private String info;
