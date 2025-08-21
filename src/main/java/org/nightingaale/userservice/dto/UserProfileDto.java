@@ -11,10 +11,10 @@ import java.util.List;
 @NoArgsConstructor
 public class UserProfileDto {
 
-    @Id
     @JsonIgnore
     private String correlationId;
 
+    @Id
     private String userId;
     private String username;
     private String info;

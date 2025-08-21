@@ -2,7 +2,6 @@ package org.nightingaale.userservice.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.nightingaale.userservice.dto.UserProfileDto;
 import org.nightingaale.userservice.event.UserRegistrationEvent;
 import org.nightingaale.userservice.event.UserRemoveEvent;
 import org.nightingaale.userservice.service.UserService;

@@ -70,17 +70,7 @@ public class UserService {
     }
 
     public Optional<UserProfileDto> getProfileById(String userId) {
-        try {
-            if (userProfileRepository.existsById(userId)) {
-                log.info("[User with ID: {} exists. Showing data...]", userId);
-            }
-
             return userProfileRepository.findById(userId)
                     .map(userProfileMapper::toDto);
-
-        } catch (RuntimeException e) {
-            log.error("[User with ID: {} could not be found]", userId, e);
-            return Optional.empty();
-        }
     }
 }
