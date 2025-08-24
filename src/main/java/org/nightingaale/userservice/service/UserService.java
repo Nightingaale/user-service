@@ -70,7 +70,11 @@ public class UserService {
     }
 
     public Optional<UserProfileDto> getProfileById(String userId) {
-            return userProfileRepository.findById(userId)
-                    .map(userProfileMapper::toDto);
+        return userProfileRepository.findById(userId)
+                .map(userProfileMapper::toDto);
+    }
+
+    public void updateProfile(UserProfileDto profileDto) {
+
     }
 }
