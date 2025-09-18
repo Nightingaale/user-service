@@ -1,4 +1,4 @@
-package org.nightingaale.userservice.dto;
+package org.nightingaale.userservice.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;

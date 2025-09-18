@@ -1,6 +1,6 @@
 package org.nightingaale.userservice.repository;
 
-import org.nightingaale.userservice.entity.UserProfileEntity;
+import org.nightingaale.userservice.model.entity.UserProfileEntity;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,6 +1,6 @@
 package org.nightingaale.userservice.repository;
 
-import org.nightingaale.userservice.entity.UserDataEntity;
+import org.nightingaale.userservice.model.entity.UserDataEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

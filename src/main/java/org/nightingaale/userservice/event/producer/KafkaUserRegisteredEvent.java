@@ -1,4 +1,4 @@
-package org.nightingaale.userservice.event;
+package org.nightingaale.userservice.event.producer;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,10 +7,8 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserRegistrationEvent {
+public class KafkaUserRegisteredEvent {
     private String correlationId;
     private String userId;
-    private String email;
-    private String username;
-    private String password;
+    private boolean userExists;
 }

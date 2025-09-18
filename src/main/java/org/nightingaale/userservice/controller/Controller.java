@@ -2,8 +2,8 @@ package org.nightingaale.userservice.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.nightingaale.userservice.event.UserRegistrationEvent;
-import org.nightingaale.userservice.event.UserRemoveEvent;
+import org.nightingaale.userservice.event.consumer.KafkaUserRegistrationEvent;
+import org.nightingaale.userservice.event.consumer.KafkaUserRemoveEvent;
 import org.nightingaale.userservice.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -21,7 +21,7 @@ public class Controller {
     private final UserService userService;
 
     @PostMapping("/registered")
-    public ResponseEntity<?> createProfileFromEvent(@RequestBody UserRegistrationEvent event, @AuthenticationPrincipal Jwt jwt) {
+    public ResponseEntity<?> createProfileFromEvent(@RequestBody KafkaUserRegistrationEvent event, @AuthenticationPrincipal Jwt jwt) {
         UUID userId = UUID.fromString(jwt.getSubject());
         event.setUserId(userId.toString());
         userService.createProfile(event);
@@ -29,7 +29,7 @@ public class Controller {
     }
 
     @DeleteMapping("/removed")
-    public ResponseEntity<?> deleteProfile(@RequestBody UserRemoveEvent event, @AuthenticationPrincipal Jwt jwt) {
+    public ResponseEntity<?> deleteProfile(@RequestBody KafkaUserRemoveEvent event, @AuthenticationPrincipal Jwt jwt) {
         UUID userId = UUID.fromString(jwt.getSubject());
         event.setUserId(userId.toString());
         userService.deleteProfile(event);

@@ -2,13 +2,13 @@ package org.nightingaale.userservice.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.nightingaale.userservice.dto.UserProfileDto;
-import org.nightingaale.userservice.entity.UserDataEntity;
-import org.nightingaale.userservice.entity.UserProfileEntity;
-import org.nightingaale.userservice.event.UserRegisteredEvent;
-import org.nightingaale.userservice.event.UserRegistrationEvent;
-import org.nightingaale.userservice.event.UserRemoveEvent;
-import org.nightingaale.userservice.event.UserRemovedEvent;
+import org.nightingaale.userservice.model.dto.UserProfileDto;
+import org.nightingaale.userservice.model.entity.UserDataEntity;
+import org.nightingaale.userservice.model.entity.UserProfileEntity;
+import org.nightingaale.userservice.event.producer.KafkaUserRegisteredEvent;
+import org.nightingaale.userservice.event.consumer.KafkaUserRegistrationEvent;
+import org.nightingaale.userservice.event.consumer.KafkaUserRemoveEvent;
+import org.nightingaale.userservice.event.producer.KafkaUserRemovedEvent;
 import org.nightingaale.userservice.mapper.UserProfileMapper;
 import org.nightingaale.userservice.mapper.UserRegistrationEventMapper;
 import org.nightingaale.userservice.repository.UserDataRepository;
@@ -28,11 +28,11 @@ public class UserService {
     private final UserDataRepository userDataRepository;
     private final UserRegistrationEventMapper userRegistrationEventMapper;
     private final UserProfileMapper userProfileMapper;
-    private final KafkaTemplate<String, UserRemovedEvent> userRemovedTemplate;
-    private final KafkaTemplate<String, UserRegisteredEvent> userRegisteredTemplate;
+    private final KafkaTemplate<String, KafkaUserRemovedEvent> userRemovedTemplate;
+    private final KafkaTemplate<String, KafkaUserRegisteredEvent> userRegisteredTemplate;
 
     @Transactional
-    public void createProfile(UserRegistrationEvent event) {
+    public void createProfile(KafkaUserRegistrationEvent event) {
         try {
             if (userDataRepository.existsById(event.getUserId())) {
                 log.warn("[User with ID: {} already exists]", event.getUserId());
@@ -45,7 +45,7 @@ public class UserService {
             UserProfileEntity userProfileEntity = userRegistrationEventMapper.toUserProfileEntity(event);
             userProfileRepository.save(userProfileEntity);
 
-            userRegisteredTemplate.send("user-registered", new UserRegisteredEvent(event.getCorrelationId(), event.getUserId(), true));
+            userRegisteredTemplate.send("user-registered", new KafkaUserRegisteredEvent(event.getCorrelationId(), event.getUserId(), true));
             log.info("[Send Kafka user-registered event to auth-service: {}", event.getUserId());
         } catch (RuntimeException e) {
             log.error("[User with ID: {} could not be created", event.getUserId(), e);
@@ -53,7 +53,7 @@ public class UserService {
     }
 
     @Transactional
-    public void deleteProfile(UserRemoveEvent event) {
+    public void deleteProfile(KafkaUserRemoveEvent event) {
         try {
             if (userDataRepository.existsById(event.getUserId())) {
                 log.info("[User with ID: {} exists. Try to delete data...]", event.getUserId());
@@ -62,7 +62,7 @@ public class UserService {
             userDataRepository.deleteByUserId(event.getUserId());
             userProfileRepository.deleteByUserId(event.getUserId());
 
-            userRemovedTemplate.send("user-removed", new UserRemovedEvent(event.getCorrelationId(), event.getUserId(), false));
+            userRemovedTemplate.send("user-removed", new KafkaUserRemovedEvent(event.getCorrelationId(), event.getUserId(), false));
             log.info("[Send Kafka user-removed event to auth-service: {}", event.getUserId());
         } catch (RuntimeException e) {
             log.error("[User with ID: {} could not be deleted]", event.getUserId(), e);

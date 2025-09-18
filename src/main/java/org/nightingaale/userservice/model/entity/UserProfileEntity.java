@@ -1,4 +1,4 @@
-package org.nightingaale.userservice.entity;
+package org.nightingaale.userservice.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Size;
