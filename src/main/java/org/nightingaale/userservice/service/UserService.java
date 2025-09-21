@@ -73,8 +73,4 @@ public class UserService {
         return userProfileRepository.findById(userId)
                 .map(userProfileMapper::toDto);
     }
-
-    public void updateProfile(UserProfileDto profileDto) {
-
-    }
 }
