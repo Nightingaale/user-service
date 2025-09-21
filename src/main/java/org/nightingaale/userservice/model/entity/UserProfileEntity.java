@@ -30,9 +30,6 @@ public class UserProfileEntity {
     @Size(min = 5, max = 20)
     private String username;
 
-    @Size(max = 256)
-    private String info;
-
     private Long balance = 0L;
 
     @Field(value = "ownedItems")

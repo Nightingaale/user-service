@@ -15,7 +15,6 @@ public class UserProfileDto {
 
     private String userId;
     private String username;
-    private String info;
     private Long balance;
 
     private List<String> ownedProducts;
