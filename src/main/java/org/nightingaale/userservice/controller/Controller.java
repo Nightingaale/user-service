@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.nightingaale.userservice.event.consumer.KafkaUserRegistrationEvent;
 import org.nightingaale.userservice.event.consumer.KafkaUserRemoveEvent;
+import org.nightingaale.userservice.model.dto.UserDataDto;
 import org.nightingaale.userservice.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -41,5 +42,12 @@ public class Controller {
         return userService.getProfileById(jwt.getSubject())
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    @PatchMapping("/update/{id}")
+    public ResponseEntity<?> updateUser(@PathVariable String id, @RequestBody UserDataDto userDataDto) {
+        userDataDto.setUserId(id);
+        userService.updateProfile(userDataDto);
+        return ResponseEntity.ok("[User has successfully updated]");
     }
 }
