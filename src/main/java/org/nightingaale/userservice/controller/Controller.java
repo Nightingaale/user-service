@@ -44,9 +44,10 @@ public class Controller {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @PatchMapping("/update/{id}")
-    public ResponseEntity<?> updateUser(@PathVariable String id, @RequestBody UserDataDto userDataDto) {
-        userDataDto.setUserId(id);
+    @PatchMapping("/update")
+    public ResponseEntity<?> updateUser(@RequestBody UserDataDto userDataDto, @AuthenticationPrincipal Jwt jwt) {
+        UUID userId = UUID.fromString(jwt.getSubject());
+        userDataDto.setUserId(userId.toString());
         userService.updateProfile(userDataDto);
         return ResponseEntity.ok("[User has successfully updated]");
     }
