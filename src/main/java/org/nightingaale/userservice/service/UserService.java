@@ -77,37 +77,33 @@ public class UserService {
                 .map(userProfileMapper::toDto);
     }
 
-    public void updateProfile(UserDataDto dataDto) {
+    @Transactional
+    public void updateProfile(UserDataDto dataDto, UserProfileDto profileDto) {
         try {
             userDataRepository.findById(dataDto.getUserId()).ifPresentOrElse(user -> {
-                Optional.ofNullable(dataDto.getUsername())
-                        .ifPresent(user::setUsername);
-                Optional.ofNullable(dataDto.getPassword())
-                        .ifPresent(password -> {user.setPassword(passwordEncoder.encode(password));});
-                Optional.ofNullable(dataDto.getEmail())
-                        .ifPresent(user::setEmail);
+                        Optional.ofNullable(dataDto.getUsername())
+                                .ifPresent(user::setUsername);
+                        Optional.ofNullable(dataDto.getPassword())
+                                .ifPresent(p -> user.setPassword(passwordEncoder.encode(p)));
+                        Optional.ofNullable(dataDto.getEmail())
+                                .ifPresent(user::setEmail);
 
-                userDataRepository.save(user);
+                        userDataRepository.save(user);
 
-                log.info("[User's data with ID: {} successfully updated]", dataDto.getUserId());
-            }, () -> {
-                log.warn("[User with ID: {} doesn't exist]", dataDto.getUserId());
-            });
+                        log.info("[User's data with ID: {} successfully updated]", dataDto.getUserId());
+                    },
+                    () -> log.warn("[User with ID: {} doesn't exist]", dataDto.getUserId()));
 
-            userProfileRepository.findById(dataDto.getUserId()).ifPresentOrElse(profile -> {
-                Optional.ofNullable(dataDto.getUsername())
+            userProfileRepository.findById(profileDto.getUserId()).ifPresentOrElse(profile -> {
+                Optional.ofNullable(profileDto.getUsername())
                         .ifPresent(profile::setUsername);
 
                 userProfileRepository.save(profile);
 
-                log.info("[User's profile with ID: {} successfully updated]", dataDto.getUserId());
-            }, () -> {
-                log.warn("[User's profile with ID: {} doesn't exist]", dataDto.getUserId());
-            });
-
+                log.info("[User's profile with ID: {} successfully updated]", profileDto.getUserId());
+            }, () -> log.warn("[User's profile with ID: {} doesn't exist]", profileDto.getUserId()));
         } catch (RuntimeException e) {
-            log.error("[User with ID: {} could not be updated]", dataDto.getUserId(), e);
-            throw e;
+            log.error("[User with ID: {} could not be updated", profileDto.getUserId(), e);
         }
     }
 }
