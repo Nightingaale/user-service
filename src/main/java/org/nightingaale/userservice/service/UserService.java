@@ -2,6 +2,7 @@ package org.nightingaale.userservice.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.nightingaale.userservice.model.dto.UserDataDto;
 import org.nightingaale.userservice.model.dto.UserProfileDto;
 import org.nightingaale.userservice.model.entity.UserDataEntity;
 import org.nightingaale.userservice.model.entity.UserProfileEntity;
@@ -14,6 +15,7 @@ import org.nightingaale.userservice.mapper.UserRegistrationEventMapper;
 import org.nightingaale.userservice.repository.UserDataRepository;
 import org.nightingaale.userservice.repository.UserProfileRepository;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,6 +32,7 @@ public class UserService {
     private final UserProfileMapper userProfileMapper;
     private final KafkaTemplate<String, KafkaUserRemovedEvent> userRemovedTemplate;
     private final KafkaTemplate<String, KafkaUserRegisteredEvent> userRegisteredTemplate;
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional
     public void createProfile(KafkaUserRegistrationEvent event) {
@@ -72,5 +75,39 @@ public class UserService {
     public Optional<UserProfileDto> getProfileById(String userId) {
         return userProfileRepository.findById(userId)
                 .map(userProfileMapper::toDto);
+    }
+
+    public void updateProfile(UserDataDto dataDto) {
+        try {
+            userDataRepository.findById(dataDto.getUserId()).ifPresentOrElse(user -> {
+                Optional.ofNullable(dataDto.getUsername())
+                        .ifPresent(user::setUsername);
+                Optional.ofNullable(dataDto.getPassword())
+                        .ifPresent(password -> {user.setPassword(passwordEncoder.encode(password));});
+                Optional.ofNullable(dataDto.getEmail())
+                        .ifPresent(user::setEmail);
+
+                userDataRepository.save(user);
+
+                log.info("[User's data with ID: {} successfully updated]", dataDto.getUserId());
+            }, () -> {
+                log.warn("[User with ID: {} doesn't exist]", dataDto.getUserId());
+            });
+
+            userProfileRepository.findById(dataDto.getUserId()).ifPresentOrElse(profile -> {
+                Optional.ofNullable(dataDto.getUsername())
+                        .ifPresent(profile::setUsername);
+
+                userProfileRepository.save(profile);
+
+                log.info("[User's profile with ID: {} successfully updated]", dataDto.getUserId());
+            }, () -> {
+                log.warn("[User's profile with ID: {} doesn't exist]", dataDto.getUserId());
+            });
+
+        } catch (RuntimeException e) {
+            log.error("[User with ID: {} could not be updated]", dataDto.getUserId(), e);
+            throw e;
+        }
     }
 }
