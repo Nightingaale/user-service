@@ -77,6 +77,7 @@ public class UserService {
                 .map(userProfileMapper::toDto);
     }
 
+    @Transactional
     public void updateProfile(UserDataDto dataDto) {
         try {
             userDataRepository.findById(dataDto.getUserId()).ifPresentOrElse(user -> {
