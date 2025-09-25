@@ -80,7 +80,7 @@ public class UserService {
     @Transactional
     public void updateProfile(UserDataDto dataDto) {
         try {
-            userDataRepository.findById(dataDto.getUserId()).ifPresentOrElse(user -> {
+            userDataRepository.findById(dataDto.getCorrelationId()).ifPresentOrElse(user -> {
                 Optional.ofNullable(dataDto.getUsername())
                         .ifPresent(user::setUsername);
                 Optional.ofNullable(dataDto.getPassword())
@@ -90,9 +90,9 @@ public class UserService {
 
                 userDataRepository.save(user);
 
-                log.info("[User's data with ID: {} successfully updated]", dataDto.getUserId());
+                log.info("[User's data with ID: {} successfully updated]", dataDto.getCorrelationId());
             }, () -> {
-                log.warn("[User with ID: {} doesn't exist]", dataDto.getUserId());
+                log.warn("[User with ID: {} doesn't exist]", dataDto.getCorrelationId());
             });
 
             userProfileRepository.findById(dataDto.getUserId()).ifPresentOrElse(profile -> {
@@ -107,7 +107,8 @@ public class UserService {
             });
 
         } catch (RuntimeException e) {
-            log.error("[User with ID: {} could not be updated]", dataDto.getUserId(), e);
+            log.error("[User's data with ID: {} could not be updated]", dataDto.getCorrelationId(), e);
+            log.error("[User's profile with ID: {} could not be updated]", dataDto.getUserId(), e);
             throw e;
         }
     }
