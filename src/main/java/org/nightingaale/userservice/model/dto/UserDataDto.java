@@ -10,5 +10,6 @@ public class UserDataDto {
     private String userId;
     private String username;
     private String password;
+    private Long balance;
     private String email;
 }
