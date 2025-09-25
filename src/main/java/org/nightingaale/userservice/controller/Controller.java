@@ -2,9 +2,10 @@ package org.nightingaale.userservice.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.nightingaale.userservice.event.UpdateUserRequestEvent;
 import org.nightingaale.userservice.event.consumer.KafkaUserRegistrationEvent;
 import org.nightingaale.userservice.event.consumer.KafkaUserRemoveEvent;
+import org.nightingaale.userservice.model.dto.UserDataDto;
+import org.nightingaale.userservice.model.dto.UserProfileDto;
 import org.nightingaale.userservice.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -44,11 +45,11 @@ public class Controller {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @PatchMapping("/update/{id}")
-    public ResponseEntity<?> updateUser(@PathVariable String id, @RequestBody UpdateUserRequestEvent request) {
-        request.getUserDataDto().setUserId(id);
-        request.getUserProfileDto().setUserId(id);
-        userService.updateProfile(request.getUserDataDto(), request.getUserProfileDto());
+    @PatchMapping("/update")
+    public ResponseEntity<?> updateUser(@RequestBody UserDataDto userDataDto, @AuthenticationPrincipal Jwt jwt) {
+        UUID userId = UUID.fromString(jwt.getSubject());
+        userDataDto.setUserId(userId.toString());
+        userService.updateProfile(userDataDto);
         return ResponseEntity.ok("[User has successfully updated]");
     }
 }
