@@ -6,8 +6,8 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserDataDto {
-    private String correlationId;
     private String userId;
+    private String correlationId;
     private String username;
     private String password;
     private Long balance;

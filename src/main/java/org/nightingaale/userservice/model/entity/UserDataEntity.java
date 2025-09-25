@@ -19,9 +19,9 @@ import java.time.LocalDateTime;
 public class UserDataEntity {
 
     @Id
-    private String correlationId;
-
     private String userId;
+
+    private String correlationId;
 
     @NotNull
     @Size(min = 5, max = 20)

@@ -20,11 +20,11 @@ import java.util.List;
 @NoArgsConstructor
 public class UserProfileEntity {
 
-    @JsonProperty("_id")
+    @JsonProperty("_correlationId")
     private String correlationId;
 
     @Id
-    @JsonProperty("userId")
+    @JsonProperty("_userId")
     private String userId;
 
     @Size(min = 5, max = 20)
