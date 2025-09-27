@@ -7,5 +7,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface UserProfileRepository extends MongoRepository<UserProfileEntity, String> {
     void deleteByUserId(String userId);
-    boolean existsByUsername(String username, String userId);
+    boolean existsByUsernameAndUserIdNot(String username, String userId);
 }

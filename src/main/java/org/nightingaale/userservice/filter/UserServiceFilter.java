@@ -21,8 +21,8 @@ public class UserServiceFilter {
 
         if (dataDto.getUsername() != null) {
 
-            boolean existsUsernameInUserData = userDataRepository.existsByUsername(dataDto.getUsername(), userId);
-            boolean existsUsernameInUserProfile = userProfileRepository.existsByUsername(dataDto.getUsername(), userId);
+            boolean existsUsernameInUserData = userDataRepository.existsByUsernameAndUserIdNot(dataDto.getUsername(), userId);
+            boolean existsUsernameInUserProfile = userProfileRepository.existsByUsernameAndUserIdNot(dataDto.getUsername(), userId);
 
             if (existsUsernameInUserData || existsUsernameInUserProfile) {
                 log.warn("[Trying to update username for userId: {}, {}]", dataDto.getUsername(), dataDto.getUserId());
@@ -32,7 +32,7 @@ public class UserServiceFilter {
 
         if (dataDto.getEmail() != null) {
 
-            boolean existsEmailInUserData = userDataRepository.existsByEmail(dataDto.getEmail(), userId);
+            boolean existsEmailInUserData = userDataRepository.existsByEmailAndUserIdNot(dataDto.getEmail(), userId);
 
             if (existsEmailInUserData) {
                 log.warn("Trying to update email for userId: {}, {}", dataDto.getEmail(), dataDto.getUserId());
