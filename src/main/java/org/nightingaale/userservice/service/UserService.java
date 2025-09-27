@@ -2,6 +2,7 @@ package org.nightingaale.userservice.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.nightingaale.userservice.filter.UserServiceFilter;
 import org.nightingaale.userservice.model.dto.UserDataDto;
 import org.nightingaale.userservice.model.dto.UserProfileDto;
 import org.nightingaale.userservice.model.entity.UserDataEntity;
@@ -33,6 +34,7 @@ public class UserService {
     private final KafkaTemplate<String, KafkaUserRemovedEvent> userRemovedTemplate;
     private final KafkaTemplate<String, KafkaUserRegisteredEvent> userRegisteredTemplate;
     private final PasswordEncoder passwordEncoder;
+    private final UserServiceFilter userServiceFilter;
 
     @Transactional
     public void createProfile(KafkaUserRegistrationEvent event) {
@@ -80,6 +82,8 @@ public class UserService {
     @Transactional
     public void updateProfile(UserDataDto dataDto) {
         try {
+            userServiceFilter.userValidation(dataDto);
+
             userDataRepository.findById(dataDto.getUserId()).ifPresentOrElse(user -> {
                 Optional.ofNullable(dataDto.getUsername())
                         .ifPresent(user::setUsername);
