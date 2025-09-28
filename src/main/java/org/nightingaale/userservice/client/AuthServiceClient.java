@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-@FeignClient(name = "auth-service", configuration = FeignClientConfig.class)
+@FeignClient(name = "auth-service", url = "http://auth-service:8090", configuration = FeignClientConfig.class)
 public interface AuthServiceClient {
-    @RequestMapping(method = RequestMethod.PATCH, value = "/api/v1/auth")
+    @RequestMapping(method = RequestMethod.PATCH, value = "/api/v1/auth/updated-user")
     void updateUser(@RequestBody KafkaUserUpdateRequestEvent request);
 }
