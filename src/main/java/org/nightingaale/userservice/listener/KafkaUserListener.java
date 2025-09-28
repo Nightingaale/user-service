@@ -2,6 +2,7 @@ package org.nightingaale.userservice.listener;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.nightingaale.userservice.event.KafkaUserUpdateRequestEvent;
 import org.nightingaale.userservice.event.consumer.KafkaUserRegistrationEvent;
 import org.nightingaale.userservice.event.consumer.KafkaUserRemoveEvent;
 import org.nightingaale.userservice.service.UserService;
@@ -25,5 +26,11 @@ public class KafkaUserListener {
     public void userRemoval(KafkaUserRemoveEvent event) {
         log.info("[Received user-remove Kafka event: {}, {}]", event.getCorrelationId(), event.getUserId());
         userService.deleteProfile(event);
+    }
+
+    @KafkaListener(topics = "user-updated", groupId = "user-service", containerFactory = "kafkaListenerContainerFactoryUserUpdated")
+    public void userUpdated(KafkaUserUpdateRequestEvent event) {
+        log.info("[Received user-updated Kafka event: {}, {}]", event.getCorrelationId(), event.getUserId());
+        userService.confirmedUpdateProfile(event);
     }
 }

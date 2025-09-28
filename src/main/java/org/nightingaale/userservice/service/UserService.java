@@ -2,6 +2,8 @@ package org.nightingaale.userservice.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.nightingaale.userservice.client.AuthServiceClient;
+import org.nightingaale.userservice.event.KafkaUserUpdateRequestEvent;
 import org.nightingaale.userservice.filter.UserServiceFilter;
 import org.nightingaale.userservice.model.dto.UserDataDto;
 import org.nightingaale.userservice.model.dto.UserProfileDto;
@@ -16,7 +18,7 @@ import org.nightingaale.userservice.mapper.UserRegistrationEventMapper;
 import org.nightingaale.userservice.repository.UserDataRepository;
 import org.nightingaale.userservice.repository.UserProfileRepository;
 import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,8 +35,10 @@ public class UserService {
     private final UserProfileMapper userProfileMapper;
     private final KafkaTemplate<String, KafkaUserRemovedEvent> userRemovedTemplate;
     private final KafkaTemplate<String, KafkaUserRegisteredEvent> userRegisteredTemplate;
-    private final PasswordEncoder passwordEncoder;
+    private final KafkaTemplate<String, KafkaUserUpdateRequestEvent> userUpdateTemplate;
+    private final AuthServiceClient authServiceClient;
     private final UserServiceFilter userServiceFilter;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Transactional
     public void createProfile(KafkaUserRegistrationEvent event) {
@@ -82,37 +86,59 @@ public class UserService {
     @Transactional
     public void updateProfile(UserDataDto dataDto) {
         try {
+
             userServiceFilter.userValidation(dataDto);
 
-            userDataRepository.findById(dataDto.getUserId()).ifPresentOrElse(user -> {
-                Optional.ofNullable(dataDto.getUsername())
+            KafkaUserUpdateRequestEvent event = new KafkaUserUpdateRequestEvent();
+            event.setCorrelationId(dataDto.getCorrelationId());
+            event.setUserId(dataDto.getUserId());
+            event.setUsername(dataDto.getUsername());
+            event.setPassword(dataDto.getPassword());
+            event.setEmail(dataDto.getEmail());
+
+            authServiceClient.updateUser(event);
+
+            userUpdateTemplate.send("user-update", event);
+            log.info("[Send Kafka user-update event to auth-service: {}", event.getUserId());
+        } catch (RuntimeException e) {
+            log.error("[User with ID: {} could not be updated", dataDto.getUserId(), e);
+            throw e;
+        }
+    }
+
+    @Transactional
+    public void confirmedUpdateProfile(KafkaUserUpdateRequestEvent event) {
+        try {
+
+            userDataRepository.findById(event.getUserId()).ifPresentOrElse(user -> {
+                Optional.ofNullable(event.getUsername())
                         .ifPresent(user::setUsername);
-                Optional.ofNullable(dataDto.getPassword())
-                        .ifPresent(password -> {user.setPassword(passwordEncoder.encode(password));});
-                Optional.ofNullable(dataDto.getEmail())
+                Optional.ofNullable(event.getPassword())
+                        .ifPresent(password -> {user.setPassword(bCryptPasswordEncoder.encode(password));});
+                Optional.ofNullable(event.getEmail())
                         .ifPresent(user::setEmail);
 
                 userDataRepository.save(user);
 
-                log.info("[User's data with ID: {} successfully updated]", dataDto.getUserId());
+                log.info("[User's data with ID: {} successfully updated]", event.getUserId());
             }, () -> {
-                log.warn("[User with ID: {} doesn't exist]", dataDto.getUserId());
+                log.warn("[User with ID: {} doesn't exist]", event.getUserId());
             });
 
-            userProfileRepository.findById(dataDto.getUserId()).ifPresentOrElse(profile -> {
-                Optional.ofNullable(dataDto.getUsername())
+            userProfileRepository.findById(event.getUserId()).ifPresentOrElse(profile -> {
+                Optional.ofNullable(event.getUsername())
                         .ifPresent(profile::setUsername);
 
                 userProfileRepository.save(profile);
 
-                log.info("[User's profile with ID: {} successfully updated]", dataDto.getUserId());
+                log.info("[User's profile with ID: {} successfully updated]", event.getUserId());
             }, () -> {
-                log.warn("[User's profile with ID: {} doesn't exist]", dataDto.getUserId());
+                log.warn("[User's profile with ID: {} doesn't exist]", event.getUserId());
             });
 
         } catch (RuntimeException e) {
-            log.error("[User's data with ID: {} could not be updated]", dataDto.getUserId(), e);
-            log.error("[User's profile with ID: {} could not be updated]", dataDto.getUserId(), e);
+            log.error("[User's data with ID: {} could not be updated]", event.getUserId(), e);
+            log.error("[User's profile with ID: {} could not be updated]", event.getUserId(), e);
             throw e;
         }
     }
