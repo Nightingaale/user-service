@@ -22,9 +22,4 @@ public class FeignClientConfig {
             }
         };
     }
-
-    @Bean
-    public Client feignClient() {
-        return new OkHttpClient();
-    }
 }
