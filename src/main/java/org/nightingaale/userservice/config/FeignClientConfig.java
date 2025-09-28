@@ -1,6 +1,8 @@
 package org.nightingaale.userservice.config;
 
+import feign.Client;
 import feign.RequestInterceptor;
+import feign.okhttp.OkHttpClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.Authentication;
@@ -19,5 +21,10 @@ public class FeignClientConfig {
                 requestTemplate.header("Authorization", "Bearer " + jwt.getTokenValue());
             }
         };
+    }
+
+    @Bean
+    public Client feignClient() {
+        return new OkHttpClient();
     }
 }
