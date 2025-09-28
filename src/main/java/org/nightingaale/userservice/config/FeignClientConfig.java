@@ -20,9 +20,4 @@ public class FeignClientConfig {
             }
         };
     }
-
-    @Bean
-    public okhttp3.OkHttpClient feignClient() {
-        return new okhttp3.OkHttpClient();
-    }
 }
