@@ -1,5 +1,6 @@
 package org.nightingaale.userservice.config;
 
+import feign.Client;
 import feign.RequestInterceptor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,4 +21,9 @@ public class FeignClientConfig {
             }
         };
     }
-}
+        @Bean
+        public Client feignClient() {
+            return new feign.httpclient.ApacheHttpClient();
+        }
+    }
+
