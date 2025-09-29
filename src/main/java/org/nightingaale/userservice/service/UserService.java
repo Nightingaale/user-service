@@ -83,13 +83,18 @@ public class UserService {
                 .map(userProfileMapper::toDto);
     }
 
+    @Transactional
     public void updateProfile(UserDataDto dataDto) {
         try {
 
             userServiceFilter.userValidation(dataDto);
 
+            UserProfileEntity userProfile = userProfileRepository.findById(dataDto.getCorrelationId())
+                    .orElseThrow(() -> new RuntimeException("User not found: " + dataDto.getCorrelationId()));
+
             KafkaUserUpdateRequestEvent event = new KafkaUserUpdateRequestEvent();
-            event.setCorrelationId(dataDto.getCorrelationId());
+            event.setUserId(dataDto.getUserId());
+            event.setCorrelationId(userProfile.getCorrelationId());
             event.setUsername(dataDto.getUsername());
             event.setPassword(dataDto.getPassword());
             event.setEmail(dataDto.getEmail());
