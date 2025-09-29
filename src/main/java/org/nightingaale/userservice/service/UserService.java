@@ -89,19 +89,14 @@ public class UserService {
 
             userServiceFilter.userValidation(dataDto);
 
-            UserProfileEntity userProfile = userProfileRepository.findById(dataDto.getCorrelationId())
-                    .orElseThrow(() -> new RuntimeException("User not found: " + dataDto.getCorrelationId()));
-
             KafkaUserUpdateRequestEvent event = new KafkaUserUpdateRequestEvent();
             event.setUserId(dataDto.getUserId());
-            event.setCorrelationId(userProfile.getCorrelationId());
+            event.setCorrelationId(dataDto.getCorrelationId());
             event.setUsername(dataDto.getUsername());
-            event.setPassword(dataDto.getPassword());
-            event.setEmail(dataDto.getEmail());
-
-            authServiceClient.updateUser(event);
 
             userUpdateTemplate.send("user-update", event);
+
+            authServiceClient.updateUser(event);
 
             log.info("[Send Kafka user-update event to auth-service: {}, {}, {}", event.getCorrelationId(), event.getUsername(), event.getEmail());
         } catch (RuntimeException e) {
