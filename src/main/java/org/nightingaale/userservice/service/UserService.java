@@ -89,18 +89,18 @@ public class UserService {
             userServiceFilter.userValidation(dataDto);
 
             KafkaUserUpdateRequestEvent event = new KafkaUserUpdateRequestEvent();
-            event.setUserId(dataDto.getUserId());
+            event.setCorrelationId(dataDto.getCorrelationId());
             event.setUsername(dataDto.getUsername());
-            event.setPassword(bCryptPasswordEncoder.encode(dataDto.getPassword()));
+            event.setPassword(dataDto.getPassword());
             event.setEmail(dataDto.getEmail());
 
             authServiceClient.updateUser(event);
 
             userUpdateTemplate.send("user-update", event);
 
-            log.info("[Send Kafka user-update event to auth-service: {}", event.getUserId());
+            log.info("[Send Kafka user-update event to auth-service: {}, {}, {}", event.getCorrelationId(), event.getUsername(), event.getEmail());
         } catch (RuntimeException e) {
-            log.error("[User with ID: {} could not be updated", dataDto.getUserId(), e);
+            log.error("[User with ID: {} could not be updated", dataDto.getCorrelationId(), e);
             throw e;
         }
     }
