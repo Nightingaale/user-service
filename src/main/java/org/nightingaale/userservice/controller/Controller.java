@@ -44,10 +44,8 @@ public class Controller {
 
     @PatchMapping("/update")
     public ResponseEntity<?> updateUser(@RequestBody UserDataDto dataDto, @AuthenticationPrincipal Jwt jwt) {
-        UUID correlationId = UUID.fromString(jwt.getSubject());
         UUID userId = UUID.fromString(jwt.getSubject());
         dataDto.setUserId(userId.toString());
-        dataDto.setCorrelationId(correlationId.toString());
         userService.updateProfile(dataDto);
         return ResponseEntity.ok("[User has successfully updated]");
     }
