@@ -91,7 +91,6 @@ public class UserService {
 
             KafkaUserUpdateRequestEvent event = new KafkaUserUpdateRequestEvent();
             event.setUserId(dataDto.getUserId());
-            event.setCorrelationId(dataDto.getCorrelationId());
             event.setUsername(dataDto.getUsername());
 
             userUpdateTemplate.send("user-update", event);
