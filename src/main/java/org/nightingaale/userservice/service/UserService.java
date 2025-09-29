@@ -124,17 +124,6 @@ public class UserService {
                 log.warn("[User with ID: {} doesn't exist]", event.getUserId());
             });
 
-            userProfileRepository.findById(event.getUserId()).ifPresentOrElse(profile -> {
-                Optional.ofNullable(event.getUsername())
-                        .ifPresent(profile::setUsername);
-
-                userProfileRepository.save(profile);
-
-                log.info("[User's profile with ID: {} successfully updated]", event.getUserId());
-            }, () -> {
-                log.warn("[User's profile with ID: {} doesn't exist]", event.getUserId());
-            });
-
         } catch (RuntimeException e) {
             log.error("[User's data with ID: {} could not be updated]", event.getUserId(), e);
             log.error("[User's profile with ID: {} could not be updated]", event.getUserId(), e);
