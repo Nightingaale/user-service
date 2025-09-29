@@ -83,15 +83,14 @@ public class UserService {
                 .map(userProfileMapper::toDto);
     }
 
-    @Transactional
     public void updateProfile(UserDataDto dataDto) {
         try {
 
             userServiceFilter.userValidation(dataDto);
 
             KafkaUserUpdateRequestEvent event = new KafkaUserUpdateRequestEvent();
-            event.setCorrelationId(dataDto.getCorrelationId());
             event.setUserId(dataDto.getUserId());
+            event.setCorrelationId(dataDto.getCorrelationId());
             event.setUsername(dataDto.getUsername());
             event.setPassword(dataDto.getPassword());
             event.setEmail(dataDto.getEmail());
@@ -99,6 +98,7 @@ public class UserService {
             authServiceClient.updateUser(event);
 
             userUpdateTemplate.send("user-update", event);
+
             log.info("[Send Kafka user-update event to auth-service: {}", event.getUserId());
         } catch (RuntimeException e) {
             log.error("[User with ID: {} could not be updated", dataDto.getUserId(), e);
