@@ -14,7 +14,6 @@ import org.springframework.stereotype.Component;
 public class UserServiceFilter {
 
     private final UserDataRepository userDataRepository;
-    private final UserProfileRepository userProfileRepository;
 
     public void userValidation(UserDataDto dataDto) {
         String userId = dataDto.getUserId();
@@ -22,9 +21,8 @@ public class UserServiceFilter {
         if (dataDto.getUsername() != null) {
 
             boolean existsUsernameInUserData = userDataRepository.existsByUsernameAndUserIdNot(dataDto.getUsername(), userId);
-            boolean existsUsernameInUserProfile = userProfileRepository.existsByUsernameAndUserIdNot(dataDto.getUsername(), userId);
 
-            if (existsUsernameInUserData || existsUsernameInUserProfile) {
+            if (existsUsernameInUserData) {
                 log.warn("[Trying to update username for userId: {}, {}]", dataDto.getUsername(), dataDto.getUserId());
                 throw new DuplicateFieldException("[Error: This username is already in use]");
             }
