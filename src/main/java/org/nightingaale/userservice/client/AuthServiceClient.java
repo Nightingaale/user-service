@@ -10,6 +10,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 @FeignClient(name = "auth-service", url = "http://auth-service:8090", configuration = FeignClientConfig.class)
 public interface AuthServiceClient {
-    @RequestMapping(method = RequestMethod.PATCH, value = "/api/v1/auth/updated-user")
+    @RequestMapping(method = RequestMethod.PATCH, value = "/api/v1/auth")
     void updateUser(@RequestBody KafkaUserUpdateRequestEvent request);
 }
