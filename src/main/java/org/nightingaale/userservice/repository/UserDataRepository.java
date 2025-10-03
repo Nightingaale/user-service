@@ -13,6 +13,6 @@ public interface UserDataRepository extends JpaRepository<UserDataEntity, String
     boolean existsByUsernameAndUserIdNot(String username, String userId);
     boolean existsByEmailAndUserIdNot(String email, String userId);
 
-    @Query("select u from UserDataEntity u where u.userId = ?1")
+    @Query("SELECT u.correlationId FROM UserDataEntity u WHERE u.userId = :userId")
     Optional<String> findCorrelationIdByUserId(String userId);
 }
