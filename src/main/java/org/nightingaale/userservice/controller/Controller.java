@@ -46,7 +46,7 @@ public class Controller {
     public ResponseEntity<?> updateUser(@RequestBody UserDataDto dataDto, @AuthenticationPrincipal Jwt jwt) {
         UUID userId = UUID.fromString(jwt.getSubject());
         dataDto.setUserId(userId.toString());
-        userService.updateProfile(dataDto);
+        userService.requestToUpdate(dataDto);
         return ResponseEntity.ok("[User has successfully updated]");
     }
 }

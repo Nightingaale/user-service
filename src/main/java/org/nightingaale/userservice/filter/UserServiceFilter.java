@@ -25,7 +25,7 @@ public class UserServiceFilter {
             boolean existsUsernameInUserProfile = userProfileRepository.existsByUsernameAndUserIdNot(dataDto.getUsername(), userId);
 
             if (existsUsernameInUserData || existsUsernameInUserProfile) {
-                log.warn("[Trying to update username for userId: {}, {}]", dataDto.getUsername(), dataDto.getUserId());
+                log.info("[Trying to update username for userId: {}, {}]", dataDto.getUsername(), dataDto.getUserId());
                 throw new DuplicateFieldException("[Error: This username is already in use]");
             }
         }
@@ -35,7 +35,7 @@ public class UserServiceFilter {
             boolean existsEmailInUserData = userDataRepository.existsByEmailAndUserIdNot(dataDto.getEmail(), userId);
 
             if (existsEmailInUserData) {
-                log.warn("Trying to update email for userId: {}, {}", dataDto.getEmail(), dataDto.getUserId());
+                log.info("Trying to update email for userId: {}, {}", dataDto.getEmail(), dataDto.getUserId());
                 throw new DuplicateFieldException("Error: [This email is already in use]");
             }
         }

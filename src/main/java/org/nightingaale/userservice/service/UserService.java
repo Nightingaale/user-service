@@ -4,7 +4,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.nightingaale.userservice.client.AuthServiceClient;
 import org.nightingaale.userservice.event.KafkaUserUpdateRequestEvent;
+import org.nightingaale.userservice.exception.DuplicateFieldException;
 import org.nightingaale.userservice.filter.UserServiceFilter;
+import org.nightingaale.userservice.mapper.UserUpdateRequestMapper;
 import org.nightingaale.userservice.model.dto.UserDataDto;
 import org.nightingaale.userservice.model.dto.UserProfileDto;
 import org.nightingaale.userservice.model.entity.UserDataEntity;
@@ -33,10 +35,13 @@ public class UserService {
     private final UserDataRepository userDataRepository;
     private final UserRegistrationEventMapper userRegistrationEventMapper;
     private final UserProfileMapper userProfileMapper;
+    private final UserUpdateRequestMapper userUpdateRequestMapper;
     private final KafkaTemplate<String, KafkaUserRemovedEvent> userRemovedTemplate;
     private final KafkaTemplate<String, KafkaUserRegisteredEvent> userRegisteredTemplate;
+    private final KafkaTemplate<String, KafkaUserUpdateRequestEvent> userUpdateTemplate;
     private final UserServiceFilter userServiceFilter;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final AuthServiceClient authServiceClient;
 
     @Transactional
     public void createProfile(KafkaUserRegistrationEvent event) {
@@ -82,10 +87,29 @@ public class UserService {
     }
 
     @Transactional
-    public void updateProfile(UserDataDto dataDto) {
+    public void requestToUpdate(UserDataDto dataDto) {
         try {
             userServiceFilter.userValidation(dataDto);
 
+            String correlationId = userDataRepository.findCorrelationIdByUserId(dataDto.getUserId())
+                    .orElseThrow(() -> new RuntimeException(
+                            "No correlationId found for userId: " + dataDto.getUserId()
+                    ));
+
+            KafkaUserUpdateRequestEvent event = userUpdateRequestMapper.toEvent(dataDto, correlationId);
+
+            userUpdateTemplate.send("user-update", event);
+            log.info("[Send Kafka user-update event to auth-service: {}", event.getUserId());
+            authServiceClient.updateUser(event);
+        } catch (DuplicateFieldException e) {
+            log.error("[User with ID: {} could not be updated", dataDto.getUserId(), e);
+            throw e;
+        }
+    }
+
+    @Transactional
+    public void updateProfile(UserDataDto dataDto) {
+        try {
             userDataRepository.findById(dataDto.getUserId()).ifPresentOrElse(user -> {
                 Optional.ofNullable(dataDto.getUsername())
                         .ifPresent(user::setUsername);

@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.nightingaale.userservice.event.consumer.KafkaUserRegistrationEvent;
 import org.nightingaale.userservice.event.consumer.KafkaUserRemoveEvent;
+import org.nightingaale.userservice.model.dto.UserDataDto;
 import org.nightingaale.userservice.service.UserService;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
@@ -25,5 +26,11 @@ public class KafkaUserListener {
     public void userRemoval(KafkaUserRemoveEvent event) {
         log.info("[Received user-remove Kafka event: {}, {}]", event.getCorrelationId(), event.getUserId());
         userService.deleteProfile(event);
+    }
+
+    @KafkaListener(topics = "user-updated", groupId = "user-service", containerFactory = "kafkaListenerContainerFactoryUserUpdated")
+    public void updateEvent(UserDataDto dataDto) {
+        log.info("Receive user-updated Kafka event: {}, {}", dataDto.getCorrelationId(), dataDto.getUserId());
+        userService.updateProfile(dataDto);
     }
 }
