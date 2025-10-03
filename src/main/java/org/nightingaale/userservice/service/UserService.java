@@ -91,9 +91,10 @@ public class UserService {
         try {
             userServiceFilter.userValidation(dataDto);
 
-            String correlationId = userDataRepository.findCorrelationIdByUserId(dataDto.getUserId())
+            String correlationId = userDataRepository.findByUserId(dataDto.getUserId())
+                    .map(UserDataEntity::getCorrelationId)
                     .orElseThrow(() -> new RuntimeException(
-                            "No correlationId found for userId: " + dataDto.getUserId()
+                            "No correlationId found for userId:" + dataDto.getUserId()
                     ));
 
             KafkaUserUpdateRequestEvent event = userUpdateRequestMapper.toEvent(dataDto, correlationId);
