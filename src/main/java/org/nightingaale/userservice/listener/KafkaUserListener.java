@@ -30,7 +30,7 @@ public class KafkaUserListener {
 
     @KafkaListener(topics = "user-updated", groupId = "user-service", containerFactory = "kafkaListenerContainerFactoryUserUpdated")
     public void updateEvent(UserDataDto dataDto) {
-        log.info("Receive user-updated Kafka event: {}, {}", dataDto.getCorrelationId(), dataDto.getUserId());
+        log.info("Received user-updated Kafka event from user-service: {}, {}", dataDto.getCorrelationId(), dataDto.getUserId());
         userService.updateProfile(dataDto);
     }
 }
