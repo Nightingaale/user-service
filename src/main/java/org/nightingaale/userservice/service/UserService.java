@@ -109,37 +109,37 @@ public class UserService {
     }
 
     @Transactional
-    public void updateProfile(UserDataDto dataDto) {
+    public void updateProfile(KafkaUserUpdateRequestEvent event) {
         try {
-            userDataRepository.findById(dataDto.getUserId()).ifPresentOrElse(user -> {
-                Optional.ofNullable(dataDto.getUsername())
+            userDataRepository.findById(event.getUserId()).ifPresentOrElse(user -> {
+                Optional.ofNullable(event.getUsername())
                         .ifPresent(user::setUsername);
-                Optional.ofNullable(dataDto.getPassword())
+                Optional.ofNullable(event.getPassword())
                         .ifPresent(password -> {user.setPassword(bCryptPasswordEncoder.encode(password));});
-                Optional.ofNullable(dataDto.getEmail())
+                Optional.ofNullable(event.getEmail())
                         .ifPresent(user::setEmail);
 
                 userDataRepository.save(user);
 
-                log.info("[User's data with ID: {} successfully updated]", dataDto.getUserId());
+                log.info("[User's data with ID: {} successfully updated]", event.getUserId());
             }, () -> {
-                log.warn("[User with ID: {} doesn't exist]", dataDto.getUserId());
+                log.warn("[User with ID: {} doesn't exist]", event.getUserId());
             });
 
-            userProfileRepository.findById(dataDto.getUserId()).ifPresentOrElse(profile -> {
-                Optional.ofNullable(dataDto.getUsername())
+            userProfileRepository.findById(event.getUserId()).ifPresentOrElse(profile -> {
+                Optional.ofNullable(event.getUsername())
                         .ifPresent(profile::setUsername);
 
                 userProfileRepository.save(profile);
 
-                log.info("[User's profile with ID: {} successfully updated]", dataDto.getUserId());
+                log.info("[User's profile with ID: {} successfully updated]", event.getUserId());
             }, () -> {
-                log.warn("[User's profile with ID: {} doesn't exist]", dataDto.getUserId());
+                log.warn("[User's profile with ID: {} doesn't exist]", event.getUserId());
             });
 
         } catch (RuntimeException e) {
-            log.error("[User's data with ID: {} could not be updated]", dataDto.getUserId(), e);
-            log.error("[User's profile with ID: {} could not be updated]", dataDto.getUserId(), e);
+            log.error("[User's data with ID: {} could not be updated]", event.getUserId(), e);
+            log.error("[User's profile with ID: {} could not be updated]", event.getUserId(), e);
             throw e;
         }
     }

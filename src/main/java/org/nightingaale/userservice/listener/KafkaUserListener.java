@@ -2,9 +2,9 @@ package org.nightingaale.userservice.listener;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.nightingaale.userservice.event.KafkaUserUpdateRequestEvent;
 import org.nightingaale.userservice.event.consumer.KafkaUserRegistrationEvent;
 import org.nightingaale.userservice.event.consumer.KafkaUserRemoveEvent;
-import org.nightingaale.userservice.model.dto.UserDataDto;
 import org.nightingaale.userservice.service.UserService;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
@@ -29,8 +29,8 @@ public class KafkaUserListener {
     }
 
     @KafkaListener(topics = "user-updated", groupId = "user-service", containerFactory = "kafkaListenerContainerFactoryUserUpdated")
-    public void updateEvent(UserDataDto dataDto) {
-        log.info("Received user-updated Kafka event from user-service: {}, {}", dataDto.getCorrelationId(), dataDto.getUserId());
-        userService.updateProfile(dataDto);
+    public void updateEvent(KafkaUserUpdateRequestEvent event) {
+        log.info("Received user-updated Kafka event from user-service: {}, {}", event.getCorrelationId(), event.getUserId());
+        userService.updateProfile(event);
     }
 }
