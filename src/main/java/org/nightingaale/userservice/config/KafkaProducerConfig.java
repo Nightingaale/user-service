@@ -51,13 +51,13 @@ public class KafkaProducerConfig {
         return new KafkaTemplate<>(userRegisteredProducerFactory());
     }
 
-    @Bean
-    public ProducerFactory<String, KafkaUserUpdateRequestEvent> userUpdateProducerFactory() {
-        return new DefaultKafkaProducerFactory<>(baseConfig());
-    }
-
-    @Bean
-    public KafkaTemplate<String, KafkaUserUpdateRequestEvent> userUpdateKafkaTemplate() {
-        return new KafkaTemplate<>(userUpdateProducerFactory());
-    }
+//    @Bean
+//    public ProducerFactory<String, KafkaUserUpdateRequestEvent> userUpdateProducerFactory() {
+//        return new DefaultKafkaProducerFactory<>(baseConfig());
+//    }
+//
+//    @Bean
+//    public KafkaTemplate<String, KafkaUserUpdateRequestEvent> userUpdateKafkaTemplate() {
+//        return new KafkaTemplate<>(userUpdateProducerFactory());
+//    }
 }
