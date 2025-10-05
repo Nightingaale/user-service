@@ -50,14 +50,4 @@ public class KafkaProducerConfig {
     public KafkaTemplate<String, KafkaUserRegisteredEvent> userRegisteredKafkaTemplate() {
         return new KafkaTemplate<>(userRegisteredProducerFactory());
     }
-
-//    @Bean
-//    public ProducerFactory<String, KafkaUserUpdateRequestEvent> userUpdateProducerFactory() {
-//        return new DefaultKafkaProducerFactory<>(baseConfig());
-//    }
-//
-//    @Bean
-//    public KafkaTemplate<String, KafkaUserUpdateRequestEvent> userUpdateKafkaTemplate() {
-//        return new KafkaTemplate<>(userUpdateProducerFactory());
-//    }
 }

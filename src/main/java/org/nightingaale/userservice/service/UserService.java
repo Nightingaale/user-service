@@ -97,9 +97,6 @@ public class UserService {
             String correlationId = user.getCorrelationId();
 
             KafkaUserUpdateRequestEvent event = userUpdateRequestMapper.toEvent(dataDto, correlationId);
-
-//            userUpdateTemplate.send("user-update", event);
-//            log.info("[Send Kafka user-update event to auth-service: {}, {}", event.getUserId(), event.getCorrelationId());
             authServiceClient.updateUser(event);
         } catch (DuplicateFieldException e) {
             log.error("[User with ID: {} could not be updated", dataDto.getUserId(), e);
