@@ -38,7 +38,6 @@ public class UserService {
     private final UserUpdateRequestMapper userUpdateRequestMapper;
     private final KafkaTemplate<String, KafkaUserRemovedEvent> userRemovedTemplate;
     private final KafkaTemplate<String, KafkaUserRegisteredEvent> userRegisteredTemplate;
-    private final KafkaTemplate<String, KafkaUserUpdateRequestEvent> userUpdateTemplate;
     private final UserServiceFilter userServiceFilter;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final AuthServiceClient authServiceClient;
