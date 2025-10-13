@@ -8,6 +8,7 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
@@ -36,7 +37,7 @@ public class UserDataEntity {
     @Size(min = 8)
     private String password;
 
-    private Long balance = 0L;
+    private BigDecimal balance = BigDecimal.valueOf(0L);
 
     @CreationTimestamp
     @Column(updatable = false)

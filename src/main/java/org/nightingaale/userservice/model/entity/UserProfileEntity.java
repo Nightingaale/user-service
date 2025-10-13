@@ -9,6 +9,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +31,7 @@ public class UserProfileEntity {
     @Size(min = 5, max = 20)
     private String username;
 
-    private Long balance = 0L;
+    private BigDecimal balance = BigDecimal.valueOf(0L);
 
     @Field(value = "ownedItems")
     private List<String> ownedProducts = new ArrayList<>();
