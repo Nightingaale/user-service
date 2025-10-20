@@ -1,7 +1,7 @@
 # User-Service (Production)
 A Spring Boot microservice designed to handle user data securely across PostgreSQL and MongoDB
 <p align="left">
-  <img src="https://skillicons.dev/icons?i=java,spring,mongo,postgresql,kafka,docker,gradle,postman,prometheus,git"/>
+  <img src="https://go-skill-icons.vercel.app/api/icons?i=java,spring,mongo,postgresql,kafka,docker,gradle,postman,prometheus,git"/>
 </p>
 
 # Features
