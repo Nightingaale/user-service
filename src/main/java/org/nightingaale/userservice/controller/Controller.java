@@ -1,6 +1,7 @@
 package org.nightingaale.userservice.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.nightingaale.userservice.event.CreateUserIdRequest;
 import org.nightingaale.userservice.event.consumer.KafkaUserRegistrationEvent;
 import org.nightingaale.userservice.event.consumer.KafkaUserRemoveEvent;
 import org.nightingaale.userservice.model.dto.UserDataDto;
@@ -48,5 +49,13 @@ public class Controller {
         dataDto.setUserId(userId.toString());
         userService.requestToUpdate(dataDto);
         return ResponseEntity.ok("[User has successfully updated]");
+    }
+
+    @PostMapping("/send")
+    public CreateUserIdRequest sendUserId(@RequestBody CreateUserIdRequest request, @AuthenticationPrincipal Jwt jwt) {
+        UUID userId = UUID.fromString(jwt.getSubject());
+        CreateUserIdRequest kafkaUserIdRequest = new CreateUserIdRequest();
+        kafkaUserIdRequest.setUserId(userId.toString());
+        return kafkaUserIdRequest;
     }
 }
