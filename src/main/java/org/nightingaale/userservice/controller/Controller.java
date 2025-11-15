@@ -52,7 +52,7 @@ public class Controller {
     }
 
     @PostMapping("/send")
-    public CreateUserIdRequest sendUserId(@RequestBody CreateUserIdRequest request, @AuthenticationPrincipal Jwt jwt) {
+    public CreateUserIdRequest sendUserId(@AuthenticationPrincipal Jwt jwt) {
         UUID userId = UUID.fromString(jwt.getSubject());
         CreateUserIdRequest kafkaUserIdRequest = new CreateUserIdRequest();
         kafkaUserIdRequest.setUserId(userId.toString());
