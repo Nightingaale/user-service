@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class KafkaPaymentTransactionEvent {
-    private String type;
     private String aggregateId;
     private String transactionId;
     private String userId;
