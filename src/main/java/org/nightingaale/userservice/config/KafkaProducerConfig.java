@@ -2,7 +2,6 @@ package org.nightingaale.userservice.config;
 
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
-import org.nightingaale.userservice.event.KafkaUserUpdateRequestEvent;
 import org.nightingaale.userservice.event.producer.KafkaUserRegisteredEvent;
 import org.nightingaale.userservice.event.producer.KafkaUserRemovedEvent;
 import org.springframework.beans.factory.annotation.Value;

@@ -3,6 +3,7 @@ package org.nightingaale.userservice.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.nightingaale.userservice.client.AuthServiceClient;
+import org.nightingaale.userservice.event.KafkaPaymentTransactionEvent;
 import org.nightingaale.userservice.event.KafkaUserUpdateRequestEvent;
 import org.nightingaale.userservice.exception.DuplicateFieldException;
 import org.nightingaale.userservice.filter.UserServiceFilter;
@@ -25,6 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
+import java.math.BigDecimal;
 
 @Slf4j
 @Service
@@ -136,6 +138,33 @@ public class UserService {
         } catch (RuntimeException e) {
             log.error("[User's data with ID: {} could not be updated]", event.getUserId(), e);
             log.error("[User's profile with ID: {} could not be updated]", event.getUserId(), e);
+            throw e;
+        }
+    }
+
+    @Transactional
+    public void updateBalance(KafkaPaymentTransactionEvent event) {
+        try {
+            userDataRepository.findById(event.getUserId()).ifPresentOrElse(user -> {
+                Optional.ofNullable(event.getAmount())
+                        .map(BigDecimal::new)
+                        .ifPresent(delta -> user.setBalance(user.getBalance().add(delta)));
+
+                userDataRepository.save(user);
+                log.info("[Balance in Postgres for user with ID: {} successfully updated to {}]", event.getUserId(), user.getBalance());
+            }, () -> log.warn("[User with ID: {} doesn't exist in Postgres]", event.getUserId()));
+
+            userProfileRepository.findById(event.getUserId()).ifPresentOrElse(profile -> {
+                Optional.ofNullable(event.getAmount())
+                        .map(BigDecimal::new)
+                        .ifPresent(delta -> profile.setBalance(profile.getBalance().add(delta)));
+
+                userProfileRepository.save(profile);
+                log.info("[Balance in Mongo for user with ID: {} successfully updated to {}]", event.getUserId(), profile.getBalance());
+            }, () -> log.warn("[User profile with ID: {} doesn't exist in Mongo]", event.getUserId()));
+
+        } catch (RuntimeException e) {
+            log.error("[Failed to update balance for user with ID: {}]", event.getUserId(), e);
             throw e;
         }
     }

@@ -2,6 +2,7 @@ package org.nightingaale.userservice.listener;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.nightingaale.userservice.event.KafkaPaymentTransactionEvent;
 import org.nightingaale.userservice.event.KafkaUserUpdateRequestEvent;
 import org.nightingaale.userservice.event.consumer.KafkaUserRegistrationEvent;
 import org.nightingaale.userservice.event.consumer.KafkaUserRemoveEvent;
@@ -30,7 +31,13 @@ public class KafkaUserListener {
 
     @KafkaListener(topics = "user-updated", groupId = "user-service", containerFactory = "kafkaListenerContainerFactoryUserUpdated")
     public void updateEvent(KafkaUserUpdateRequestEvent event) {
-        log.info("Received user-updated Kafka event from user-service: {}, {}", event.getCorrelationId(), event.getUserId());
+        log.info("[Received user-updated Kafka event from user-service: {}, {}", event.getCorrelationId(), event.getUserId());
         userService.updateProfile(event);
+    }
+
+    @KafkaListener(topics = "payment-transaction-create", groupId = "user-service", containerFactory = "kafkaListenerContainerFactoryUserUpdateBalance")
+    public void userBalanceUpdate(KafkaPaymentTransactionEvent event) {
+        log.info("[Received payment-transaction-create Kafka event: {}, {}]", event.getAggregateId(), event.getUserId());
+        userService.updateBalance(event);
     }
 }
